@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="og:title" content="Infootmation: European football players visualisation">
+    <meta name="og:description" content="A visualization of interesting statistics for football players of the biggest euopean leagues.">
+    <meta name="og:image" content="img/desc_img.png">
+    <title>Infootmation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Yann Dubois">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/favicon.png">
+    <link rel="icon" sizes="60x60" href="img/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+
+    <!-- BOOTRSTAP CDN -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="styles/dc.min.css">
+    <link rel="stylesheet" href="styles/radar-chart.css">
+    
+
+    <!-- Le styles -->
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+
+      
+    </style>
+   
+  </head>
+
+  <body>
+
+    <!-- ################# HEADER ################# -->
+    <div class="navbar navbar-inverse navbar-fixed-top" id="my-navbar" role="navigation">
+
+      <div class="container ">
+
+        <div class="navbar-header ">
+          <a class="navbar-brand" href="#">
+            <img src="img/T3.png" width="207" height="25" alt="">
+          </a>
+
+        </div>
+
+
+        
+        <div class="navbar-search pull-right navbar-form">
+          <div class="input-group">
+            <input id='player_search_box' type="text" class="form-control mr-sm-2" placeholder="Player" aria-describedby="sizing-addon2">
+
+            <div id='player_search_button' class="input-group-btn" data-toggle="buttons" >
+              <label id='player_search_submit' class="btn btn-default my-2 my-sm-0" onclick="updateAll()">
+                <i class="glyphicon glyphicon-search"></i>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="container">
+
+      <!-- ################# CHART ################# -->
+      <h1>Player</h1>
+      <dev id="chart"></dev>
+      <h2>Bar chart: goal by type</h2>
+      <div id="chartGoalTeam"></div>
+      <svg id="pitch" width=387 height=200>
+        <image  x=0 y=0 width=387 height=200 xlink:href='img/half_pitch.jpg'></image>
+      </svg>
+
+      <!-- <div id='player_search_container' class='row'>
+          <input id='player_search_box' type="text" class="form-control" placeholder="Player" aria-describedby="sizing-addon2">
+
+          <div id='player_search_button' class="btn-group" data-toggle="buttons" >
+            <label id='player_search_submit' class="btn btn-primary active " onclick="updateAll()">
+              <input type="radio" name="options" id="" autocomplete="off" checked > Search
+            </label>
+          </div>
+      </div> -->
+       
+
+      <!-- ################# FOOTER ################# -->
+      <hr>
+      <footer class="main-footer">
+          
+
+          <div class="text-center center-block">
+                      <a href="http://www.yourlink.com"><img src="img/infootmation.png" width="97" height="13" alt="" /></a>
+                       &copy; <a href="https://github.com/YannDubs">Yann Dubois</a>, 2017 
+          </div>
+
+      </footer>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script type="text/javascript" src="scripts/d3.js"></script>
+    <script type="text/javascript" src="scripts/crossfilter.js"></script>
+    <script type="text/javascript" src="scripts/dc.min.js"></script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>    
+
+   <script type="text/javascript" src="scripts/radar-chart.js"></script>
+
+    <script type="text/javascript">
+    'use strict';  
+
+    // ############################# GLOBAL VARIABLES #############################
+    // ########## CROSSFILTER ##########
+    // ROnaldo : 30893 / Lewandowski : 93447 / MEssi: 30981
+    // intital player
+    var playerID= typeof playerID !== 'undefined' ? playerID : 30981;
+
+    var crossPlayers = [];
+    var crossIncidents = [];
+    var playerDimension ;
+    var playerIncDimension ;
+    var typeDimension ;
+    var againstDimension  ;
+    var subtypeDimension ;
+    var teamGroup ;
+    var averagePlayer = new Object();
+    var chartTest;
+
+    // ########## PITCH ##########
+    var heightPitchImage = 200;
+    var widthPitchImage = 387;
+    var heightPitchReal = 105;
+    var widthPitchReal = 68;
+    var marginWidthLeft = 66/1160*widthPitchImage;
+    var marginWidthRight = 67/1160*widthPitchImage;
+    var marginHeightBegin = 53/600*heightPitchImage;
+    var marginHeightEnd = 9/600*heightPitchImage;
+    var pitchScaleHeight = d3.scale.linear()
+                                .domain([0,heightPitchReal/2])
+                                .range([marginHeightBegin,heightPitchImage-marginHeightEnd]);
+    var pitchScaleWidth = d3.scale.linear()
+                                .domain([0,widthPitchReal])
+                                .range([marginWidthLeft,widthPitchImage-marginWidthRight]);
+
+    // ############################# FUNCTIONS #############################
+    // ########## HELP FUNCTIONS ########## 
+    function print_filter(filter) {
+        var f=eval(filter);
+        if (typeof(f.length) != "undefined") {}else{}
+        if (typeof(f.top) != "undefined") {f=f.top(Infinity);}else{}
+        if (typeof(f.dimension) != "undefined") {f=f.dimension(function(d) { return "";}).top(Infinity);}else{}
+        console.log(filter+"("+f.length+") = "+JSON.stringify(f).replace("[","[\n\t").replace(/}\,/g,"},\n\t").replace("]","\n]"));
+    }
+
+    function top3Bins(source_group) {
+        // takes top 5, bit if equality keeeps more
+
+        return {
+          // iterates through each object and puts it back in JSON
+            all:function () {
+                var maxCounter = 3;
+                var counter = 0;
+                var lastValue = 0;
+                // sorts the values and returns top 10
+                // SHOULD BE OPTIMIZED: don't sort all!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                return source_group.all().sort(function(a, b) {
+                  return parseFloat(b.value) - parseFloat(a.value);
+                }).filter(function (d){
+                  if (counter < maxCounter || d.value === lastValue){
+                    ++counter;
+                    lastValue = d.value;
+                    return true;
+                  } else {
+                    // SHOULD BE OPTIMIZED: don't go through all because sorted !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+                    return false;
+                  }
+                });
+            }
+        };
+    }
+
+    function removeEmptyBins(source_group) {
+        return {
+            all:function () {
+                return source_group.all().filter(function(d) {
+                    return d.value != 0;
+                });
+            }
+        };
+    }
+
+    // Parse the date / time
+    var parseDate = d3.time.format("%Y-%m-%d").parse
+
+    function transformHalfPitch(lat){
+      if(lat > heightPitchReal/2){
+        return heightPitchReal-lat;
+      }
+      return lat;
+    }
+
+    // ##########  DRAW FUNCTIONS ##########  
+    function drawRadar(cross,averagePlayer) {
+
+      function crossfilterToRadar(cross,variables,wholeData) {
+        var data = [];
+        var average = [];
+        $.each(cross.dimension(function(d){return "";}).top(Infinity)[0], function(index, value) {
+            if(variables.indexOf(index) > -1) {
+              data.push({axis: index, value: value});
+              var meanIndex = averagePlayer[index];
+              average.push({axis: index, value: meanIndex });
+            }
+        }); 
+        return [data,average];
+      }
+
+      // Should fix axes for comparaison !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      var axisVar = ["shot_power","finishing","dribbling","acceleration","crossing"];
+      
+      // problem: cannot hover over the one behind !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      RadarChart.draw("#chart", crossfilterToRadar(cross,axisVar,averagePlayer));
+    }
+
+     function drawGoals(cross) {
+
+       var goalBalls = d3.select("#pitch").selectAll("image")
+                                 .data(cross.dimension(function(d) { return "";}).top(Infinity))
+                                 .enter()
+                                 .append('image')
+                                 .attr("class", "ball");
+
+      goalBalls
+       .attr("x", function (d) { return pitchScaleWidth( d.lon); })
+       .attr("y", function (d) { return pitchScaleHeight(transformHalfPitch(d.lat)); })
+       .attr('xlink:href',"img/ball.png")
+       .attr('width', '17')
+       .attr('height', '17')
+       .attr('opacity', '0.9');
+    }
+
+    function drawBarchart(cross,dimension,group){
+
+        chartTest = dc.barChart("#chartGoalTeam")
+            .dimension(dimension)
+            .group(removeEmptyBins(top3Bins(group)))
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .ordering(function(d) { return -d.value; })
+            .barPadding(0.1)
+            .outerPadding(0.1)
+            .width(1000)
+            .height(500)
+            .on('renderlet', function(chart) {
+                chart.selectAll('rect').on("click", function(d) {
+                    // chart.selectAll('rect')
+                    //   .transition()
+                    //   .duration(750)
+                    //   .attr("fill","steelblue");
+
+                    // d3.select(this)
+                    //   .transition()
+                    //   .duration(750)
+                    //   .attr("fill","Coral");
+                    chart.onClick(d);
+                    // ATTENTION: problem if too quick !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    updateGoal(cross);
+                });
+            });
+        
+        chartTest.yAxis().ticks(6);
+
+        chartTest.render();
+        
+    }
+
+    // ##########   UPDATE FUNCTIONS ########## 
+    function updateGoal(cross, timeTransit = 307){
+
+       var goalBalls = d3.select("#pitch").selectAll(".ball")
+                                 .data(cross.dimension(function(d) {  return "";}).top(Infinity))
+                                 ;
+
+
+      goalBalls.exit().remove();
+      goalBalls.enter().append("image")
+        .attr("class", "ball")
+        .attr("x", pitchScaleWidth(widthPitchReal/2))
+        .attr("y", pitchScaleHeight(11));                            
+
+      goalBalls
+       .transition()
+        .duration(timeTransit)
+        .attr('xlink:href',"img/ball.png")
+       .attr("x", function (d) { return pitchScaleWidth( d.lon); })
+       .attr("y", function (d) { return pitchScaleHeight(transformHalfPitch(d.lat)); })
+       .attr('width', '17')
+       .attr('height', '17')
+       .attr('opacity', '0.9');
+    }
+
+    function updateAll(){
+      //resets filter
+      playerDimension.filterAll();
+      // get the searched player
+      var playerName = $('#player_search_box').val();
+
+      // Needs to deal with the fact that multiple names could be the same !!!!!!!!!!!!!!!!!!!
+      // needs to add autocomplete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // should show error if not in array !!!!!
+      crossPlayers.dimension(function(d) {  return "";}).top(Infinity).forEach( function (player) {
+
+          if (player.player_name.toUpperCase() === playerName.toUpperCase()){
+            debugger;
+            playerID = player.player_api_id;
+          }
+      });
+      console.log(playerID);
+
+      playerDimension.filterExact(playerID);
+      playerIncDimension.filterExact(playerID);
+
+      drawRadar(crossPlayers,averagePlayer);
+      
+      // STRANE: has to regfroup if not strange things happen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      teamGroup = againstDimension.group();//.orderNatural();
+      drawBarchart(crossIncidents,againstDimension,teamGroup);
+
+      updateGoal(crossIncidents,750);
+
+      //if (all_genes.indexOf(search_gene) != -1){
+        // zoom and highlight found gene 
+        /////////////////////////////////
+       // zoom_and_highlight_found_gene(search_gene);
+        
+      //}
+    }    
+
+    // ############################# MAIN PROGRAMM #############################
+
+    // ##########  LOAD PLAYER DATA ########## 
+    d3.csv("data/player_stats.csv", function(error,player_stats){
+      var nPlayers = player_stats.length;
+
+      player_stats.forEach(function(d,i) {
+        // folowing found with :
+        // head -n 1 soccerKaggle.csv | sed 's/"//g' | awk -F ',' '{ for(i = 1; i <= NF; i++) { print "d."$i,"= +" "d."$i";"; } }'
+        d.player_api_id = +d.player_api_id;
+        d.date = parseDate(d.date);
+        d.overall_rating = +d.overall_rating;
+        d.potential = +d.potential;
+        d.crossing = +d.crossing;
+        d.finishing = +d.finishing;
+        d.heading_accuracy = +d.heading_accuracy;
+        d.short_passing = +d.short_passing;
+        d.volleys = +d.volleys;
+        d.dribbling = +d.dribbling;
+        d.curve = +d.curve;
+        d.free_kick_accuracy = +d.free_kick_accuracy;
+        d.long_passing = +d.long_passing;
+        d.ball_control = +d.ball_control;
+        d.acceleration = +d.acceleration;
+        d.sprint_speed = +d.sprint_speed;
+        d.agility = +d.agility;
+        d.reactions = +d.reactions;
+        d.balance = +d.balance;
+        d.shot_power = +d.shot_power;
+        d.jumping = +d.jumping;
+        d.stamina = +d.stamina;
+        d.strength = +d.strength;
+        d.long_shots = +d.long_shots;
+        d.aggression = +d.aggression;
+        d.interceptions = +d.interceptions;
+        d.positioning = +d.positioning;
+        d.vision = +d.vision;
+        d.penalties = +d.penalties;
+        d.marking = +d.marking;
+        d.standing_tackle = +d.standing_tackle;
+        d.sliding_tackle = +d.sliding_tackle;
+        d.gk_diving = +d.gk_diving;
+        d.gk_handling = +d.gk_handling;
+        d.gk_kicking = +d.gk_kicking;
+        d.gk_positioning = +d.gk_positioning;
+        d.gk_reflexes = +d.gk_reflexes;
+        d.birthday = parseDate(d.birthday);
+        d.height = +d.height;
+        d.weight = +d.weight;
+
+        for (var key in d) {
+          if (i === 0){
+            // first loop
+            averagePlayer[key] = 0;
+          }
+
+          if (d.hasOwnProperty(key) && !isNaN(d[key]) ) {
+               averagePlayer[key] += d[key]/nPlayers;
+            }
+        }
+      });
+      crossPlayers = crossfilter(player_stats);
+      player_stats = null; 
+      playerDimension = crossPlayers.dimension(function(d) {return d.player_api_id ;});
+
+      //ex: lewandowski
+      playerDimension.filterExact(playerID);
+
+      drawRadar(crossPlayers,averagePlayer);
+      
+      // ##########  LOAD INCIDENTS DATA ########## 
+      d3.csv("data/incidents.csv", function(error,incidents){
+
+        incidents.forEach(function(d) {
+          // folowing found with :
+          // head -n 1 soccerKaggle.csv | sed 's/"//g' | awk -F ',' '{ for(i = 1; i <= NF; i++) { print "d."$i,"= +" "d."$i";"; } }'
+          d.id = +d.id;
+          d.player1 = +d.player1;
+          d.player2 = +d.player2;
+          d.lon = +d.lon;
+          d.lat = +d.lat;
+          d.elapsed = +d.elapsed;
+          d.elapsed_plus = +d.elapsed_plus;
+          d.game_id = +d.game_id;
+          d.stage = +d.stage;
+          d.date = parseDate(d.date);
+          d.home_team_goal = +d.home_team_goal;
+          d.away_team_goal = +d.away_team_goal;
+          d.isHome = (d.isHome === 'true');
+        });
+
+        crossIncidents = crossfilter(incidents);
+        playerIncDimension = crossIncidents.dimension(function(d) {return d.player1 ;});
+        typeDimension = crossIncidents.dimension(function(d) {return d.type ;});
+        againstDimension = crossIncidents.dimension(function(d) {return d.againstTeam ;});
+        subtypeDimension = crossIncidents.dimension(function(d) {return d.subtype1 ;});
+        teamGroup =  againstDimension.group().orderNatural();
+
+        //ex: lewandowski
+        playerIncDimension.filterExact(playerID);
+        typeDimension.filterExact("goal");
+        //subtypeDimension.filterExact("penalty");
+
+        drawBarchart(crossIncidents,againstDimension,teamGroup)
+
+        drawGoals(crossIncidents);
+        //BUTTON SEARCH
+        // submit player button 
+        $("#player_search_box").keyup(function (e) {
+              // if pressed enter or return
+              if (e.keyCode == 13) {
+                  // Do something
+                  // console.log('pressed enter');
+                  updateAll();
+              }
+          });
+      });
+    });
+
+    
+
+    </script>
+
+  </body>
+</html>
