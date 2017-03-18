@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1150" height="720" xmlns="http://www.w3.org/2000/svg">
+ <title>soccer_field</title>
+ <!--         -->
+ <!--                  -->
+ <!--      -->
+ <!--         -->
+ <!--      -->
+ <!--         -->
+ <!--       -->
+ <!--         -->
+ <g>
+  <title>Layer 1</title>
+  <rect id="svg_1" fill="white" height="720" width="1150" y="0" x="0"/>
+  <path id="svg_2" fill="white" stroke-width="5" stroke="Black" d="m575,20l-525,0l0,680l1050,0l0,-680l-525,0l0,680l0,-680z"/>
+  <circle id="svg_3" fill-opacity="0" stroke-width="5" stroke="Black" r="91.5" cy="360" cx="575"/>
+  <circle id="svg_4" fill="Black" stroke="Black" r="2" cy="360" cx="575"/>
+  <circle id="svg_5" fill="Black" stroke="Black" r="2" cy="360" cx="160"/>
+  <circle id="svg_6" fill="Black" stroke="Black" r="2" cy="360" cx="990"/>
+  <path id="svg_7" fill-opacity="0" stroke-width="5" stroke="Black" d="m50,324.399994l-10,0l0,72.200012l10,0l0,-72.200012z"/>
+  <path id="svg_8" fill-opacity="0" stroke-width="5" stroke="Black" d="m1100,324.399994l10,0l0,72.200012l-10,0l0,-72.200012z"/>
+  <path id="svg_9" fill-opacity="0" stroke-width="5" stroke="Black" d="m50,269.399994l55,0l0,182.200012l-55,0l0,-182.200012z"/>
+  <path id="svg_10" fill-opacity="0" stroke-width="5" stroke="Black" d="m1100,269.399994l-55,0l0,182.200012l55,0l0,-182.200012z"/>
+  <path id="svg_11" fill-opacity="0" stroke-width="5" stroke="Black" d="m50,159.399994l165,0l0,402.199982l-165,0l0,-402.199982z"/>
+  <path id="svg_12" fill-opacity="0" stroke-width="5" stroke="Black" d="m1100,159.399994l-165,0l0,402.199982l165,0l0,-402.199982z"/>
+  <path id="svg_13" fill="white" stroke-width="5" stroke="Black" d="m215,286.875a91.5,91.5 0 0 1 0,146.25l0,-146.25z"/>
+  <path id="svg_14" fill="white" stroke-width="5" stroke="Black" d="m935,286.875a91.5,91.5 0 0 0 0,146.25l0,-146.25z"/>
+  <path id="svg_15" fill-opacity="0" stroke-width="5" stroke="Black" d="m50,30a10,10 0 0 0 10,-10l-10,0l0,10z"/>
+  <path id="svg_16" fill-opacity="0" stroke-width="5" stroke="Black" d="m60,700a10,10 0 0 0 -10,-10l0,10l10,0z"/>
+  <path id="svg_17" fill-opacity="0" stroke-width="5" stroke="Black" d="m1100,690a10,10 0 0 0 -10,10l10,0l0,-10z"/>
+  <path id="svg_18" fill-opacity="0" stroke-width="5" stroke="Black" d="m1090,20a10,10 0 0 0 10,10l0,-10l-10,0z"/>
+ </g>
+</svg>

@@ -1,0 +1,63 @@
+header{
+	background: #999;
+	color: white;
+	padding: 15px 15px 0px 15px;
+}
+
+body{
+	margin: 0;
+}
+
+header h1{
+	margin: 0;
+	display: inline;
+}
+
+nav ul{
+	margin: 0;
+	padding: 0 0 0 15px;
+	display: inline;
+}
+
+nav ul li{
+	list-style-type: none;
+	display: inline-block;
+	background: black;
+	color: white;
+	padding: 5px 15px;
+}
+
+nav ul li a{
+	color: white;
+}
+
+.row{
+
+}
+
+.col{
+	float: left;
+}
+
+.chart div {
+  font: 10px sans-serif;
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}
+
+.chart rect {
+  fill: steelblue;
+}
+
+.chart text {
+  fill: white;
+  font: 10px sans-serif;
+  text-anchor: end;
+}
+
+footer{
+	clear: both;
+}
