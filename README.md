@@ -1,2 +1,2 @@
-# Inffotmation
- Visualise european soccer player's dat
+# Infootmation
+ Visualise european soccer player's data
