@@ -1,63 +1,76 @@
-header{
-	background: #999;
-	color: white;
-	padding: 15px 15px 0px 15px;
+body {
+  padding-top: 47px; /* 60px to make the container go all the way to the bottom of the topbar */
+  padding-left: 17px; 
+  padding-right: 17px; 
 }
 
-body{
-	margin: 0;
+h2 {
+  font-size:17px;
 }
 
-header h1{
-	margin: 0;
-	display: inline;
+@media (max-width: 767px) {
+  body {
+    padding-top: 117px;
+  }
 }
 
-nav ul{
-	margin: 0;
-	padding: 0 0 0 15px;
-	display: inline;
+/*#chartGoalTeam .x.axis text {
+    text-align: right;
+    transform: rotate(-57deg);
+}*/
+
+.col-centered {
+  float: none;
+  margin-right: auto;
+  margin-left: auto;
 }
 
-nav ul li{
-	list-style-type: none;
-	display: inline-block;
-	background: black;
-	color: white;
-	padding: 5px 15px;
+#togglePercentage {
+	font-size: 11px;
+	width: 73px;
 }
 
-nav ul li a{
-	color: white;
+.elementAbove {
+	position: relative; 
+	left: 239px; 
+	bottom: 187px; 
+	z-index: 3;
 }
 
-.row{
-
+.elementBelow{
+	z-index: 2;
 }
 
-.col{
-	float: left;
+.elementContains {
+	padding-top: 17px; 
+	position: relative; 
+	z-index: 1;
 }
 
-.chart div {
-  font: 10px sans-serif;
-  background-color: steelblue;
-  text-align: right;
-  padding: 3px;
-  margin: 1px;
-  color: white;
+.circleKey {
+	stroke-width: 1; 
+	fill: none;
+	stroke: grey;
 }
 
-.chart rect {
-  fill: steelblue;
+.textCircle {
+	font-size: 7;
+	fill: grey;
+	stroke: none;
 }
 
-.chart text {
-  fill: white;
-  font: 10px sans-serif;
-  text-anchor: end;
+.imageChild {
+	height: 100%; 
+	width: 100%; 
+	background-color: #f0f0f0;
+	border-radius: 17px;
 }
 
-footer{
-	clear: both;
+#height {
+	font-weight: bold;
+}
+
+.textBox {
+	text-align: center;
+	vertical-align: middle;
 }

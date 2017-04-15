@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
 
+
+
     <meta charset="utf-8">
     <meta name="og:title" content="Infootmation: European football players visualisation">
     <meta name="og:description" content="A visualization of interesting statistics for football players of the biggest euopean leagues.">
@@ -14,6 +16,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
 
+
+
     <!-- BOOTRSTAP CDN -->
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,16 +26,11 @@
 
     <link rel="stylesheet" href="styles/dc.min.css">
     <link rel="stylesheet" href="styles/radar-chart.css">
-    
 
     <!-- Le styles -->
-    <style>
-      body {
-        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
+    <Link  rel="stylesheet" href="styles/main.css" type="text/css">
 
-      
-    </style>
+    
    
   </head>
 
@@ -40,15 +39,13 @@
     <!-- ################# HEADER ################# -->
     <div class="navbar navbar-inverse navbar-fixed-top" id="my-navbar" role="navigation">
 
-      <div class="container ">
+      <div class="container">
 
         <div class="navbar-header ">
           <a class="navbar-brand" href="#">
             <img src="img/T3.png" width="207" height="25" alt="">
           </a>
-
         </div>
-
 
         
         <div class="navbar-search pull-right navbar-form">
@@ -56,7 +53,7 @@
             <input id='player_search_box' type="text" class="form-control mr-sm-2" placeholder="Player" aria-describedby="sizing-addon2">
 
             <div id='player_search_button' class="input-group-btn" data-toggle="buttons" >
-              <label id='player_search_submit' class="btn btn-default my-2 my-sm-0" onclick="updateAll()">
+              <label id='player_search_submit' class="btn btn-default my-2 my-sm-0" onclick="updateAll(); ">
                 <i class="glyphicon glyphicon-search"></i>
               </label>
             </div>
@@ -66,16 +63,61 @@
 
     </div>
 
-    <div class="container">
+    <div class="container-fluid">
 
       <!-- ################# CHART ################# -->
-      <h1>Player</h1>
-      <dev id="chart"></dev>
-      <h2>Bar chart: goal by type</h2>
-      <div id="chartGoalTeam"></div>
-      <svg id="pitch" width=387 height=200>
-        <image  x=0 y=0 width=387 height=200 xlink:href='img/half_pitch.jpg'></image>
-      </svg>
+
+      <div class="row">
+      		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12>">
+	      		<div class="center-block textBox" style="width:177px;">
+	            	<h1 id="playerNameHeader" style="font-size:23px;font-weight: bold;">Robert Lewandowski</h1>
+	            	<image class="imageChild" id="playerPicture" x=0 y=0 src='http://cdn.sofifa.org/17/players/188545.png'></image>
+	      	  	</div>
+      	  	</div>
+      
+      		<div class="col-lg-10 col-md-9 col-sm-6 col-xs-12>">
+      			<div class="row center-block" style="padding-top: 27px;">
+		      		<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block elementContains" height=307 width=317 >
+		      			<div class="center-block elementBelow" >
+			      			<svg id="silhouette" height=307 width=317>	
+			      				<text id="textPercentage" x="37.7%" y="4%" font-size = "17" > Percentage of goals </text>
+			       		  		<image x="47%" y="53%" height=267 transform="translate(-91.66,-133.5)" xlink:href='img/silhouette2.svg'></image>
+			      		  		<circle class = "circleHover" id ="shotCircle" cx="173" cy="237" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px"/>
+			      		  		<circle class = "circleHover" id ="headerCircle" cx="133" cy="57" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px" />
+			      		  		<text id="playerHeight" x="0" y="53%" font-size = "17" > 185cm</text>
+			      		  		<text id="playerWeight" x="47%" y="303" font-size = "17" > 79kg</text>
+								<g id="circlesLegend"> </g>
+							</svg>	
+						</div>
+
+						<div class="elementAbove" >
+			      			<button id="togglePercentage" type="button" class="btn btn-default"  onclick="this.blur(); updatePercentage();  ">On target</button>
+		      			</div>
+		      		</div>
+
+		      		<div class = "col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block " >	
+		      			<div class="center-block" id="chart"  height=307 width=317 ></div>
+		      		</div>
+		      	</div>
+
+		      	<div class="row center-block" style="padding-top: 17px; padding-bottom: 17px;">
+		      		<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block text-center"  height=307 width=317 >
+			      		<h2 style="font-size: 7;" >Most scored against</h2>
+			      		<div id="chartGoalTeam"></div>
+					</div>
+
+		      		<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block" >
+			      		<svg id="pitch" width=387 height=200>
+			      		  <image  x=0 y=0 width=387 height=200 xlink:href='img/half_pitch.svg'></image>
+			      		</svg>
+					</div>
+		      	</div>
+      		</div>
+      </div>   
+
+	  
+
+      <!-- image from : http-//www.clipartpanda.com/categories/soccer-player-clipart can use freely-->
 
       <!-- <div id='player_search_container' class='row'>
           <input id='player_search_box' type="text" class="form-control" placeholder="Player" aria-describedby="sizing-addon2">
@@ -107,6 +149,10 @@
     <!-- Placed at the end of the document so the pages load faster -->
 
     <script type="text/javascript" src="scripts/d3.js"></script>
+    <script type="text/javascript" src="scripts/d3-color.min.js"></script>
+    <script type="text/javascript" src="scripts/d3-interpolate.min.js"></script>
+    <script type="text/javascript" src="scripts/d3-scale.min.js"></script>
+    <script type="text/javascript" src="scripts/d3-scale-chromatic.min.js"></script>
     <script type="text/javascript" src="scripts/crossfilter.js"></script>
     <script type="text/javascript" src="scripts/dc.min.js"></script>
 
@@ -123,11 +169,14 @@
     'use strict';  
 
     // ############################# GLOBAL VARIABLES #############################
+    // ########## PARAMETERS ##########
+    // stardard size that will be using:
+    var stdHeight=307 
+    var stdWidth=317
+    // intital percentage parameter with default to goal
+    var typePercentage = (typeof typePercentage  !== 'undefined') ? typePercentage : "goalPercentage";
+   
     // ########## CROSSFILTER ##########
-    // ROnaldo : 30893 / Lewandowski : 93447 / MEssi: 30981
-    // intital player
-    var playerID= typeof playerID !== 'undefined' ? playerID : 30981;
-
     var crossPlayers = [];
     var crossIncidents = [];
     var playerDimension ;
@@ -138,6 +187,11 @@
     var teamGroup ;
     var averagePlayer = new Object();
     var chartTest;
+
+    // ########## PLAYER ##########
+    // ROnaldo : 30893 / Lewandowski : 93447 / MEssi: 30981
+    // intital player iwth default
+    var playerID = (typeof playerID !== 'undefined') ? playerID : 93447;
 
     // ########## PITCH ##########
     var heightPitchImage = 200;
@@ -155,8 +209,38 @@
                                 .domain([0,widthPitchReal])
                                 .range([marginWidthLeft,widthPitchImage-marginWidthRight]);
 
+    // ########## PERCENTAGE GOALS CIRCLE ##########
+    // ### RADIUS SCALE ### what we really see is the area which is proportional to square
+    // uses square root because 
+    // absolute max / min: trial and error to see what's good
+    var minRadius = 3;
+    var maxRadius = 53;
+    // last time checked the max total shot + header was cristiano ronaldo with 234 => use 237 (more and nice nuber)
+    var maxShots = 237;
+    var goalScaleRadius = d3.scale.sqrt()
+                                .domain([1,maxShots])
+                                .range([minRadius,maxRadius]);
+
+    // ### HUE SCALE ###
+    //var goalScaleHue = function(invT) { return d3.interpolateInferno(1-invT); };
+    //var goalScaleHue = d3.interpolateYlGnBu;
+    //var goalScaleHue = function(noScaleT) {return d3.interpolateYlGnBu(Math.pow(noScaleT,0.47));};
+    var goalScaleHue = function(noScaleT) {return d3.interpolateYlGnBu(noScaleT*2.7);};
+    //var goalScaleHue = function(noScaleT) {return d3.interpolateYlOrRd(noScaleT*2.7);};
+    var targetScaleHue = function(noScaleT) {return d3.interpolateYlGnBu(noScaleT/0.37-0.97);};
+
+    // ### TRANSPARENCY SCALE ###
+    var goalScaleTransparency = function(noScaleT) {return 0.67 + noScaleT*0.33;};
+    	
+
     // ############################# FUNCTIONS #############################
     // ########## HELP FUNCTIONS ########## 
+    function toTitleCase(str) {
+      return str.toLowerCase().split(' ').map(function(word) {
+        return (word.charAt(0).toUpperCase() + word.slice(1));
+      }).join(' ');
+    }
+
     function print_filter(filter) {
         var f=eval(filter);
         if (typeof(f.length) != "undefined") {}else{}
@@ -221,7 +305,7 @@
         $.each(cross.dimension(function(d){return "";}).top(Infinity)[0], function(index, value) {
             if(variables.indexOf(index) > -1) {
               data.push({axis: index, value: value});
-              var meanIndex = averagePlayer[index];
+              var meanIndex = Math.round(averagePlayer[index]);
               average.push({axis: index, value: meanIndex });
             }
         }); 
@@ -230,9 +314,17 @@
 
       // Should fix axes for comparaison !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       var axisVar = ["shot_power","finishing","dribbling","acceleration","crossing"];
+
+      var config = {
+        w: stdWidth,
+        h: stdHeight,
+        maxValue: 100
+        //levels: 6,
+        //ExtraWidthX: 300
+      }
       
       // problem: cannot hover over the one behind !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      RadarChart.draw("#chart", crossfilterToRadar(cross,axisVar,averagePlayer));
+      RadarChart.draw("#chart", crossfilterToRadar(cross,axisVar,averagePlayer), config );
     }
 
      function drawGoals(cross) {
@@ -262,8 +354,8 @@
             .ordering(function(d) { return -d.value; })
             .barPadding(0.1)
             .outerPadding(0.1)
-            .width(1000)
-            .height(500)
+            .width(417)
+            .height(227)
             .on('renderlet', function(chart) {
                 chart.selectAll('rect').on("click", function(d) {
                     // chart.selectAll('rect')
@@ -280,14 +372,103 @@
                     updateGoal(cross);
                 });
             });
-        
+
+        chartTest.margins().bottom = 77;
+
         chartTest.yAxis().ticks(6);
 
         chartTest.render();
+
+       // rotates axis
+       d3.select("#chartGoalTeam .x.axis").selectAll("text")
+       		.style("text-anchor", "end")
+       		.attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-57)" );
+
         
     }
 
+     function drawMan() {
+     	var scaleHue;
+     	var whichGradient;
+     	var numeratorHeader;
+     	var numeratorShot;
+
+	 	//HEADERS
+	 	var nGoalHeader = playerDimension.top(1)[0].goalHeader;
+	 	var nShotoffHeader = playerDimension.top(1)[0].shotoffHeader;    
+	 	var nShotonHeader = playerDimension.top(1)[0].shotonHeader ;   
+	 	var totalHeader = nGoalHeader + nShotoffHeader + nShotonHeader;
+
+	 	//SHOTS
+	 	var nGoalShot = playerDimension.top(1)[0].goalShot;
+	 	var nShotoffShot = playerDimension.top(1)[0].shotoffShot;    
+	 	var nShotonShot = playerDimension.top(1)[0].shotonShot ;
+	 	var totalShot = nGoalShot + nShotoffShot + nShotonShot;
+
+	 	if (typePercentage === "goalPercentage") {
+	 		scaleHue = goalScaleHue;
+	 		whichGradient = "gradientGoal";
+	 		numeratorHeader = nGoalHeader ;
+	 		numeratorShot = nGoalShot;
+
+	 	} else {
+	 		scaleHue = targetScaleHue;
+	 		whichGradient = "gradientTarget";
+	 		numeratorHeader = nGoalHeader + nShotonHeader;
+	 		numeratorShot = nGoalShot + nShotonShot;
+	 	}
+
+       
+       d3.select("#headerCircle")
+         .transition().duration(1077)
+         .attr("r", goalScaleRadius(totalHeader))
+         .attr("fill", scaleHue((numeratorHeader)/(totalHeader)))
+         .attr("opacity", goalScaleTransparency(numeratorHeader/totalHeader));
+
+ 
+       d3.select("#shotCircle")
+         .transition().duration(1077)
+         .attr("r", goalScaleRadius(totalShot))
+         .attr("fill", scaleHue((numeratorShot)/(totalShot)))
+         .attr("opacity", goalScaleTransparency(numeratorShot/totalShot));
+   
+       	// changes the gradient so that the sacel is shows more differences
+       	//d3.select('#silhouette rect').attr("fill", "url(#" + whichGradient + ")");
+
+       	d3.select('#gradientGoal')
+       	  .selectAll("stop")
+       	  .transition()
+       	  .duration(1077)
+       	  .attr("stop-color", function (d,i) {return scaleHue(i/11); })
+       	  .attr('stop-opacity', function (d,i) {return goalScaleTransparency(i/11); });
+       	
+       	
+
+    }
+
     // ##########   UPDATE FUNCTIONS ########## 
+    function updatePercentage(){
+
+    	var textPercentage = d3.select('#textPercentage');
+    	var textButton = d3.select('#togglePercentage');
+
+    	if (typePercentage  === "goalPercentage") {
+    		typePercentage = "targetPercentage";
+    		textPercentage.text("Percentage of shots on target").attr("x","23.7%");
+    		textButton.text('Goals');
+
+
+    	} else {
+    		typePercentage = "goalPercentage";
+    		textPercentage.text("Percentage of goals").attr("x","37.7%");
+    		textButton.text('On target');
+    	}
+
+    	drawMan();
+    }
+
     function updateGoal(cross, timeTransit = 307){
 
        var goalBalls = d3.select("#pitch").selectAll(".ball")
@@ -316,19 +497,22 @@
       //resets filter
       playerDimension.filterAll();
       // get the searched player
-      var playerName = $('#player_search_box').val();
+      var playerNameSearch = $('#player_search_box').val();
 
       // Needs to deal with the fact that multiple names could be the same !!!!!!!!!!!!!!!!!!!
       // needs to add autocomplete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       // should show error if not in array !!!!!
       crossPlayers.dimension(function(d) {  return "";}).top(Infinity).forEach( function (player) {
+        if (toTitleCase(player.player_name) === toTitleCase(playerNameSearch)){
+        	playerID = player.player_api_id;
+        	document.getElementById('playerPicture').src = 'http://cdn.sofifa.org/17/players/' + player.player_fifa_api_id + '.png';
+        	document.getElementById("playerNameHeader").innerHTML = toTitleCase(player.player_name);
+        	document.getElementById("playerHeight").innerHTML = player.height + "cm";
+        	document.getElementById("playerWeight").innerHTML = player.weight + "kg";
 
-          if (player.player_name.toUpperCase() === playerName.toUpperCase()){
-            debugger;
-            playerID = player.player_api_id;
-          }
+        }
+
       });
-      console.log(playerID);
 
       playerDimension.filterExact(playerID);
       playerIncDimension.filterExact(playerID);
@@ -338,6 +522,8 @@
       // STRANE: has to regfroup if not strange things happen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       teamGroup = againstDimension.group();//.orderNatural();
       drawBarchart(crossIncidents,againstDimension,teamGroup);
+
+      drawMan() ;
 
       updateGoal(crossIncidents,750);
 
@@ -359,6 +545,7 @@
         // folowing found with :
         // head -n 1 soccerKaggle.csv | sed 's/"//g' | awk -F ',' '{ for(i = 1; i <= NF; i++) { print "d."$i,"= +" "d."$i";"; } }'
         d.player_api_id = +d.player_api_id;
+        d.player_fifa_api_id = +d.player_fifa_api_id;
         d.date = parseDate(d.date);
         d.overall_rating = +d.overall_rating;
         d.potential = +d.potential;
@@ -396,8 +583,14 @@
         d.gk_positioning = +d.gk_positioning;
         d.gk_reflexes = +d.gk_reflexes;
         d.birthday = parseDate(d.birthday);
-        d.height = +d.height;
-        d.weight = +d.weight;
+        d.height = Math.round(+d.height);
+        d.weight = Math.round((+d.weight)*0.453592);
+        d.goalShot = +d.goalShot;
+        d.shotoffShot = +d.shotoffShot;
+        d.shotonShot = +d.shotonShot;
+        d.goalHeader = +d.goalHeader;
+        d.shotoffHeader = +d.shotoffHeader;
+        d.shotonHeader = +d.shotonHeader;
 
         for (var key in d) {
           if (i === 0){
@@ -416,8 +609,11 @@
 
       //ex: lewandowski
       playerDimension.filterExact(playerID);
+      
 
       drawRadar(crossPlayers,averagePlayer);
+
+      drawMan();
       
       // ##########  LOAD INCIDENTS DATA ########## 
       d3.csv("data/incidents.csv", function(error,incidents){
@@ -468,7 +664,157 @@
       });
     });
 
-    
+	// ##########  AFTER LOAD PLAYER DATA ########## 
+
+	// ###### PLAYER SILHOUETTE GRAPH  ######
+
+	// ### AXIS COLOR GRADIENT ###
+	// programatically generate the gradient for the legend this creates an array of [percent, colour] pairs as stop values for legend
+
+	// GOAL PERCENTAGE GRADIENT
+	var gradient = d3.select('#silhouette').append('defs')
+	           .append('linearGradient')
+	           .attr('id', 'gradientGoal')
+	           .attr('x1', '0%') // from left
+	           .attr('y1', '0%')
+	           .attr('x2', '100%') // to right
+	           .attr('y2', '0%');
+
+	var nStopsColor = 10;
+	for(var count = 0; count <= nStopsColor; count++){
+		var percentStop = count/nStopsColor;
+       gradient.append('stop')
+           .attr('offset', 100* percentStop + '%')
+           .attr('stop-color', goalScaleHue(percentStop))
+           .attr('stop-opacity', goalScaleTransparency(percentStop));
+    }
+
+    /*
+	// SHOT ON TARGET PERCENTAGE GRADIENT
+	var gradient = d3.select('#silhouette').append('defs')
+	           .append('linearGradient')
+	           .attr('id', 'gradientTarget')
+	           .attr('x1', '0%') // from left
+	           .attr('y1', '0%')
+	           .attr('x2', '100%') // to right
+	           .attr('y2', '0%');
+
+	var nStopsColor = 10;
+	for(var count = 0; count <= nStopsColor; count++){
+		var percentStop = count/nStopsColor;
+       gradient.append('stop')
+           .attr('offset', 100* percentStop + '%')
+           .attr('stop-color', targetScaleHue(percentStop))
+           .attr('stop-opacity', goalScaleTransparency(percentStop));
+    }*/
+
+    // DRAW AXIS
+    // default is goal
+    d3.select('#silhouette').append("rect")
+          .attr("x", "23%")
+          .attr("y", "5.7%")
+          .attr("rx", "7")
+          .attr("ry", "7")
+          .attr("width", "75.7%")
+          //.attr("width", "167")
+          .attr("height", "13")
+          .attr("fill", "url(#gradientGoal)");
+
+    d3.select('#silhouette').append("text")
+		  .text("100%")
+          //.attr("x", "67%")
+          .attr("x", "87.7%")
+          .attr("y", "9%")
+          .attr("font-size", "9")
+          .attr("fill", "white");
+
+    //show 3 circle as example
+    var circleRadii = [20, 50, 100];
+    var minCircleRadii = circleRadii[0];
+
+    d3.select('#circlesLegend').selectAll("circle")
+			.data(circleRadii)
+			.enter()
+			.append("circle")
+			.attr("class", function(d,i) { return (i === 2) ? "circleKey" : "circleKey changeHoverCircle"; } )
+			.attr("cx", "87%")
+          	.attr("cy", "31%")
+          	.attr("r", function (d) { return goalScaleRadius(d); })
+          	.attr("transform", function (d) { return "translate(" + 0 + "," + -(goalScaleRadius(d)-goalScaleRadius(minCircleRadii)) + ")"; });
+
+    d3.select('#circlesLegend').selectAll("text")
+			.data(circleRadii)
+			.enter()
+			.append("text")
+			.text(function(d) { return d ;})
+			.attr("class", "changeHoverCircle")
+			.attr("x", "85.3%")
+			.attr("y", "29.7%")
+			.attr("font-size", "8")
+			.attr("fill", "grey")
+          	.attr("transform", function(d,i) { return "translate(" + -(i===2)*2 + "," + -(goalScaleRadius(d)-goalScaleRadius(minCircleRadii))*1.97 + ")"; });
+
+    d3.select('#circlesLegend').append("text")
+    	.text("number of shots")
+    	.attr("x", "77.3%")
+    	.attr("y", "38.7%")
+    	.attr("font-size", "8")
+    	.attr("fill", "grey");
+
+    d3.select('#circlesLegend').append("text")
+    	.text("7")
+    	.attr("id", "nShotsCircles")
+    	.attr("x", "84.7%")
+    	.attr("y", "28.3%")
+    	.attr("font-size", "24")
+    	.attr("fill", "grey")
+    	.attr("visibility", "hidden");
+
+    var lastOpacity;
+
+    function circleMouseOver (){
+    	var d3This = d3.select(this);
+    	lastOpacity = d3This.style("opacity");
+    	var nGoals = Math.round(goalScaleRadius.invert(parseFloat(d3This.style("r")))).toString();
+
+    	d3This.transition()
+    		  .attr("opacity","1")
+    		  .attr("stroke-width","2px");
+
+    	d3.selectAll(".changeHoverCircle")
+    	  .transition()
+    	  .attr("visibility", "hidden");
+
+	 	d3.selectAll("#nShotsCircles")
+	 	  .transition()
+	 	  .text(nGoals)
+	 	  .attr("x", 86.7 - 2*nGoals.length + "%") // moves to be in the midle
+	 	  .attr("visibility","visible");
+    }
+
+    function circleMouseOut (){
+    	d3.select(this)
+    	  .transition()
+    	  .attr("opacity",lastOpacity)
+    	  .attr("stroke-width","0px");
+
+    	d3.selectAll(".changeHoverCircle")
+    	  .transition()
+    	  .attr("visibility", "visible");
+
+    	d3.selectAll("#nShotsCircles")
+    	  .transition()
+    	  .attr("visibility","hidden");
+    }
+
+   	d3.selectAll(".circleHover")
+   	  .on('mouseover', circleMouseOver ) 
+   	  .on('mouseout', circleMouseOut );
+
+
+	//<rect x="23%" y="7%" rx="7" ry="7" width="207" height="15" stroke="black"  />
+    //<circle class ="circleKey" cx="87%" cy="237" r="30"  />
+    //<circle class = "changeHoverCircle circleKey" cx="173" cy="237" r="30"  />
 
     </script>
 

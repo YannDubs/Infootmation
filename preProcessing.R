@@ -40,6 +40,7 @@ node_to_dataframe <- function(n, key) {
 ## UPLOAD DATA ##
 con <- dbConnect(SQLite(), dbname="./data/database.sqlite")
 
+# chooses season and league
 df <- dbGetQuery(con,"SELECT * FROM Match WHERE country_id IN ('1729','4769','7809','10257','21518') AND season IN ('2015/2016')")
 matches <- subset(df, select = c(id,country_id,season,stage,date,home_team_api_id,away_team_api_id,home_team_goal,away_team_goal,goal,shoton,shotoff,foulcommit,card,cross,corner,possession) )
 matches$date <- as.Date(matches$date,format="%Y-%m-%d")
@@ -55,8 +56,9 @@ league        <- dbGetQuery(con,"SELECT * FROM League")
 
 df      <- dbGetQuery(con,"SELECT * FROM Player")
 # removes player fifa id because in player and player stats
-player <- subset(df, select = -c(player_fifa_api_id,id))
+player <- subset(df, select = -c(id))
 remove(df)
+
 
 #removes time froma dates
 player$birthday <- as.Date(player$birthday,format="%Y-%m-%d")
@@ -122,7 +124,10 @@ incidents$subtype1 <- recode(incidents$subtype1,
                              "dg"="disallowed goal",
                              "npm"="saved penalty",
                              "psm"="missed penalty",
-                             "rp"="retaken penalty")
+                             "rp"="retaken penalty",
+                             .missing="shot")
+
+incidents$subtype2 <- recode(incidents$subtype2,.missing="shot")
 
 incidents <- subset(incidents, !(subtype1 %in% c("retaken penalty","disallowed goal")))
 incidents$type[incidents$subtype1=="saved penalty"]<-"shoton"
@@ -131,17 +136,24 @@ incidents$type[incidents$subtype1=="missed penalty"]<-"shotoff"
 incidents$subtype1[incidents$subtype1 %in% c("saved penalty","missed penalty")] <- "penalty"
 incidents$type[incidents$subtype1 == "penalty"]<-"goal"
 
-incidents$subtype1[incidents$type=="goal"&incidents$subtype1!="penalty"] <- incidents$subtype2[incidents$type=="goal"&incidents$subtype1!="penalty"]
+incidents$subtype1[incidents$type=="goal" & !(incidents$subtype1 %in% c("penalty","own goal"))] <- 
+  incidents$subtype2[incidents$type=="goal"& !(incidents$subtype1 %in% c("penalty","own goal"))]
 
 incidents$subtype1 <- recode(incidents$subtype1,
                              "direct_freekick"="direct freekick",
                              "tap_in"="tap in",
                              "loose_ball"="loose ball",
-                             "bicycle_kick"="bicycle kick",
+                             "bicycle_kick"="bicycle",
                              "blocked_shot"="shot",
                              "blocked_header"="header",
                              "miss_kick"="shot",
-                             .missing="shot")
+                             "big chance header"="header",
+                             "big chance bicycle"="bicycle",
+                             "big chance crossbar"="crossbar",
+                             "big chance post"="post",
+                             "big chance shot"="shot",
+                             "big chance volley"="volley",
+                             "bad shot"="shot")
 # removes NA
 incidents %<>% mutate(elapsed_plus = ifelse(is.na(elapsed_plus), 0, elapsed_plus))
 # changes coordinates to represent changes in pitch.
@@ -166,6 +178,33 @@ incidents %<>% mutate(isHome = ifelse(team == home_team, 'true', 'false'))
 # against whom
 incidents %<>% mutate(againstTeam = ifelse(team == home_team, away_team , home_team ))
 incidents %<>% subset(select = -c(home_team,away_team,subtype2))
+
+incidents$player1 %<>% as.integer(incidents$player1)
+
+# PLAYER_STATS add info from incidents
+groupedIncidents = incidents %>% 
+  group_by(player1,type,subtype1) %>% 
+  tally() 
+
+groupedIncidentHeader = groupedIncidents[groupedIncidents$subtype1 == "header", ] %>% 
+  subset(select = -c(subtype1)) %>%
+  spread(type,n,fill=0) 
+
+colnames(groupedIncidentHeader) <- c("id","goalHeader","shotoffHeader","shotonHeader")
+
+groupedIncidentShot = groupedIncidents[groupedIncidents$subtype1 != "header", ] %>% 
+  group_by(player1,type) %>% 
+  summarise(count = sum(n)) %>%
+  spread(type,count,fill=0) 
+
+colnames(groupedIncidentShot) <- c("id","goalShot","shotoffShot","shotonShot")
+
+player_stats %<>% left_join(groupedIncidentShot, by = c("player_api_id" = "id")) 
+player_stats %<>% left_join(groupedIncidentHeader, by = c("player_api_id" = "id"))
+
+player_stats[,c("goalShot","shotoffShot","shotonShot","goalHeader","shotoffHeader","shotonHeader")
+             ][is.na(player_stats[,c("goalShot","shotoffShot","shotonShot","goalHeader","shotoffHeader","shotonHeader")])] <- 0 
+
 
 write.csv(incidents,"data/incidents.csv", row.names = F)
 write.csv(player_stats,"data/player_stats.csv", row.names = F)
