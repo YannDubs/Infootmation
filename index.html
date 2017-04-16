@@ -72,6 +72,14 @@
 	      		<div class="center-block textBox" style="width:177px;">
 	            	<h1 id="playerNameHeader" style="font-size:23px;font-weight: bold;">Robert Lewandowski</h1>
 	            	<image class="imageChild" id="playerPicture" x=0 y=0 src='http://cdn.sofifa.org/17/players/188545.png'></image>
+	            	
+	            	<select class="form-control selectpicker">
+	            	  <option>2013/2014</option>
+	            	  <option>2014/2015</option>
+	            	  <option selected>2015/2016</option>
+	            	  <option>All</option>
+	            	</select>
+
 	      	  	</div>
       	  	</div>
       
@@ -84,6 +92,8 @@
 			       		  		<image x="47%" y="53%" height=267 transform="translate(-91.66,-133.5)" xlink:href='img/silhouette2.svg'></image>
 			      		  		<circle class = "circleHover" id ="shotCircle" cx="173" cy="237" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px"/>
 			      		  		<circle class = "circleHover" id ="headerCircle" cx="133" cy="57" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px" />
+			      		  		<text id="headerPercentageText" x="133" y="63" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+			      		  		<text id="shotPercentageText" x="174.7" y="243" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
 			      		  		<text id="playerHeight" x="0" y="53%" font-size = "17" > 185cm</text>
 			      		  		<text id="playerWeight" x="47%" y="303" font-size = "17" > 79kg</text>
 								<g id="circlesLegend"> </g>
@@ -175,10 +185,15 @@
     var stdWidth=317
     // intital percentage parameter with default to goal
     var typePercentage = (typeof typePercentage  !== 'undefined') ? typePercentage : "goalPercentage";
+    // initiall season: 2015/2016
+    var season = (typeof season !== 'undefined') ? season : "2015/2016";
    
     // ########## CROSSFILTER ##########
+    var arrayHeader ;
+    var arrayShot ;
     var crossPlayers = [];
     var crossIncidents = [];
+    var seasonIncDimension ;
     var playerDimension ;
     var playerIncDimension ;
     var typeDimension ;
@@ -214,7 +229,7 @@
     // uses square root because 
     // absolute max / min: trial and error to see what's good
     var minRadius = 3;
-    var maxRadius = 53;
+    var maxRadius = 57;
     // last time checked the max total shot + header was cristiano ronaldo with 234 => use 237 (more and nice nuber)
     var maxShots = 237;
     var goalScaleRadius = d3.scale.sqrt()
@@ -231,6 +246,7 @@
 
     // ### TRANSPARENCY SCALE ###
     var goalScaleTransparency = function(noScaleT) {return 0.67 + noScaleT*0.33;};
+    var goalScaleTransparencyInvert = function(toInvert) {return (toInvert-0.67)/0.33 ;};
     	
 
     // ############################# FUNCTIONS #############################
@@ -395,16 +411,28 @@
      	var numeratorHeader;
      	var numeratorShot;
 
-	 	//HEADERS
-	 	var nGoalHeader = playerDimension.top(1)[0].goalHeader;
+	 	/*
+	 	//if precomputed
+	 	var nGoalHeader =  playerDimension.top(1)[0].goalHeader;
 	 	var nShotoffHeader = playerDimension.top(1)[0].shotoffHeader;    
 	 	var nShotonHeader = playerDimension.top(1)[0].shotonHeader ;   
 	 	var totalHeader = nGoalHeader + nShotoffHeader + nShotonHeader;
 
-	 	//SHOTS
 	 	var nGoalShot = playerDimension.top(1)[0].goalShot;
 	 	var nShotoffShot = playerDimension.top(1)[0].shotoffShot;    
 	 	var nShotonShot = playerDimension.top(1)[0].shotonShot ;
+	 	var totalShot = nGoalShot + nShotoffShot + nShotonShot;*/
+	 	
+	 	//HEADERS
+	 	var nGoalHeader =  arrayHeader[0].value;
+	 	var nShotoffHeader = arrayHeader[1].value;   
+	 	var nShotonHeader = arrayHeader[2].value;
+	 	var totalHeader = nGoalHeader + nShotoffHeader + nShotonHeader;
+
+	 	//SHOTS
+	 	var nGoalShot =  arrayShot[0].value;
+	 	var nShotoffShot = arrayShot[1].value;   
+	 	var nShotonShot = arrayShot[2].value;
 	 	var totalShot = nGoalShot + nShotoffShot + nShotonShot;
 
 	 	if (typePercentage === "goalPercentage") {
@@ -523,6 +551,8 @@
       teamGroup = againstDimension.group();//.orderNatural();
       drawBarchart(crossIncidents,againstDimension,teamGroup);
 
+      arrayHeader = typeDimension.group().reduceSum(function(d) { return (d.subtype1==="header");}).all();
+      arrayShot = typeDimension.group().reduceSum(function(d) { return !(d.subtype1==="header");}).all();
       drawMan() ;
 
       updateGoal(crossIncidents,750);
@@ -533,6 +563,73 @@
        // zoom_and_highlight_found_gene(search_gene);
         
       //}
+    }
+
+    // ### INTERACTIVE: ON ... FUNCTION ###
+    var lastOpacity;
+    var lastPositionMovingText ; //= "86.7%";
+
+    function circleMouseOver (){
+    	var d3This = d3.select(this);
+    	lastOpacity = d3This.style("opacity");
+    	var nGoals = Math.round(goalScaleRadius.invert(parseFloat(d3This.style("r")))).toString();
+    	var percentage = Math.round(1000*goalScaleTransparencyInvert(d3This.style("opacity")))/10; 
+    	lastPositionMovingText = d3.select("#movingPercentage").attr('x'); // if wants to store last
+    	var startAxis = parseFloat(d3.select("#silhouette rect").attr("x"));
+
+    	d3This.transition()
+    		  .attr("opacity","1")
+    		  .attr("stroke-width","2px");
+
+    	d3.selectAll(".changeHoverCircle")
+    	  .transition()
+    	  .attr("visibility", "hidden");
+
+	 	d3.selectAll("#nShotsCircles")
+	 	  .transition()
+	 	  .text(nGoals)
+	 	  .attr("x", 86.7 - 2*nGoals.length + "%") // moves to be in the midle
+	 	  .attr("visibility","visible");
+
+	 	d3.select("#movingPercentage")
+	 	  .transition()
+	 	  .text(percentage + "%")
+	 	  .attr("font-weight", "bolder")
+	 	  .attr("fill","black")
+	 	  .attr("x", startAxis + (89.7-startAxis)*percentage / 100+"%") ;
+
+	 	if (d3This.attr("id") === "shotCircle") {
+	 		d3.select("#shotPercentageText").transition().text(percentage + "%").attr("font-size", 2.7*Math.sqrt(parseFloat(d3This.style("r"))));
+	 	} else {
+	 		d3.select("#headerPercentageText").transition().text(percentage + "%").attr("font-size", 2.7*Math.sqrt(parseFloat(d3This.style("r"))));
+	 	}
+	 	
+    }
+
+    function circleMouseOut (){
+    	d3.select(this)
+    	  .transition()
+    	  .attr("opacity",lastOpacity)
+    	  .attr("stroke-width","0px");
+
+    	d3.selectAll(".changeHoverCircle")
+    	  .transition()
+    	  .attr("visibility", "visible");
+
+    	d3.selectAll("#nShotsCircles")
+    	  .transition()
+    	  .attr("visibility","hidden");
+
+    	d3.select("#movingPercentage")
+    	  .transition()
+    	  .text("100%")
+    	  .attr("fill","white")
+    	  .attr("font-weight", "normal")
+    	  .attr("x", lastPositionMovingText) ;
+
+    	d3.select("#headerPercentageText").text("");
+    	d3.select("#shotPercentageText").text("")
+
     }    
 
     // ############################# MAIN PROGRAMM #############################
@@ -613,7 +710,7 @@
 
       drawRadar(crossPlayers,averagePlayer);
 
-      drawMan();
+      
       
       // ##########  LOAD INCIDENTS DATA ########## 
       d3.csv("data/incidents.csv", function(error,incidents){
@@ -641,26 +738,24 @@
         typeDimension = crossIncidents.dimension(function(d) {return d.type ;});
         againstDimension = crossIncidents.dimension(function(d) {return d.againstTeam ;});
         subtypeDimension = crossIncidents.dimension(function(d) {return d.subtype1 ;});
+        seasonIncDimension = crossIncidents.dimension(function(d) {return d.season ;});
         teamGroup =  againstDimension.group().orderNatural();
 
         //ex: lewandowski
         playerIncDimension.filterExact(playerID);
+        // ex: 2015/2016
+        seasonIncDimension.filterExact(season);
+        // only looks at goals for now
         typeDimension.filterExact("goal");
         //subtypeDimension.filterExact("penalty");
+        arrayShot = typeDimension.group().reduceSum(function(d) { return !(d.subtype1==="header");}).all();
+        arrayHeader = typeDimension.group().reduceSum(function(d) { return (d.subtype1==="header");}).all();
+        drawMan();
 
         drawBarchart(crossIncidents,againstDimension,teamGroup)
 
         drawGoals(crossIncidents);
-        //BUTTON SEARCH
-        // submit player button 
-        $("#player_search_box").keyup(function (e) {
-              // if pressed enter or return
-              if (e.keyCode == 13) {
-                  // Do something
-                  // console.log('pressed enter');
-                  updateAll();
-              }
-          });
+        
       });
     });
 
@@ -722,6 +817,7 @@
 
     d3.select('#silhouette').append("text")
 		  .text("100%")
+		  .attr("id", "movingPercentage")
           //.attr("x", "67%")
           .attr("x", "87.7%")
           .attr("y", "9%")
@@ -770,51 +866,37 @@
     	.attr("fill", "grey")
     	.attr("visibility", "hidden");
 
-    var lastOpacity;
-
-    function circleMouseOver (){
-    	var d3This = d3.select(this);
-    	lastOpacity = d3This.style("opacity");
-    	var nGoals = Math.round(goalScaleRadius.invert(parseFloat(d3This.style("r")))).toString();
-
-    	d3This.transition()
-    		  .attr("opacity","1")
-    		  .attr("stroke-width","2px");
-
-    	d3.selectAll(".changeHoverCircle")
-    	  .transition()
-    	  .attr("visibility", "hidden");
-
-	 	d3.selectAll("#nShotsCircles")
-	 	  .transition()
-	 	  .text(nGoals)
-	 	  .attr("x", 86.7 - 2*nGoals.length + "%") // moves to be in the midle
-	 	  .attr("visibility","visible");
-    }
-
-    function circleMouseOut (){
-    	d3.select(this)
-    	  .transition()
-    	  .attr("opacity",lastOpacity)
-    	  .attr("stroke-width","0px");
-
-    	d3.selectAll(".changeHoverCircle")
-    	  .transition()
-    	  .attr("visibility", "visible");
-
-    	d3.selectAll("#nShotsCircles")
-    	  .transition()
-    	  .attr("visibility","hidden");
-    }
-
-   	d3.selectAll(".circleHover")
+       	d3.selectAll(".circleHover")
    	  .on('mouseover', circleMouseOver ) 
    	  .on('mouseout', circleMouseOut );
 
 
-	//<rect x="23%" y="7%" rx="7" ry="7" width="207" height="15" stroke="black"  />
-    //<circle class ="circleKey" cx="87%" cy="237" r="30"  />
-    //<circle class = "changeHoverCircle circleKey" cx="173" cy="237" r="30"  />
+   	// ###### UPDATE SEASON ######
+   	$(function() {
+   	  $('.selectpicker').on('change', function(){
+   	    season = $(this).find("option:selected").val();
+   	    //debugger;
+   	    if (season === "All"){
+   	    	// resets filter so that thakes all into account
+   	    	seasonIncDimension.filterAll();
+   	    } else {
+   	    	seasonIncDimension.filterExact(season);
+   	    }
+   	    updateAll();
+   	  });
+   	  
+   	});
+
+   	// ###### UPDATE PLAYER ######
+   	// submit player button 
+   	$("#player_search_box").keyup(function (e) {
+   	      // if pressed enter or return
+   	      if (e.keyCode == 13) {
+   	          // Do something
+   	          // console.log('pressed enter');
+   	          updateAll();
+   	      }
+   	  });
 
     </script>
 

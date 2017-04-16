@@ -41,7 +41,7 @@ node_to_dataframe <- function(n, key) {
 con <- dbConnect(SQLite(), dbname="./data/database.sqlite")
 
 # chooses season and league
-df <- dbGetQuery(con,"SELECT * FROM Match WHERE country_id IN ('1729','4769','7809','10257','21518') AND season IN ('2015/2016')")
+df <- dbGetQuery(con,"SELECT * FROM Match WHERE country_id IN ('1729','4769','7809','10257','21518') AND season IN ('2015/2016','2014/2015','2013/2014')")
 matches <- subset(df, select = c(id,country_id,season,stage,date,home_team_api_id,away_team_api_id,home_team_goal,away_team_goal,goal,shoton,shotoff,foulcommit,card,cross,corner,possession) )
 matches$date <- as.Date(matches$date,format="%Y-%m-%d")
 remove(df)
@@ -182,6 +182,8 @@ incidents %<>% subset(select = -c(home_team,away_team,subtype2))
 incidents$player1 %<>% as.integer(incidents$player1)
 
 # PLAYER_STATS add info from incidents
+# comment out because computes directly in d3
+if (FALSE){
 groupedIncidents = incidents %>% 
   group_by(player1,type,subtype1) %>% 
   tally() 
@@ -205,7 +207,10 @@ player_stats %<>% left_join(groupedIncidentHeader, by = c("player_api_id" = "id"
 player_stats[,c("goalShot","shotoffShot","shotonShot","goalHeader","shotoffHeader","shotonHeader")
              ][is.na(player_stats[,c("goalShot","shotoffShot","shotonShot","goalHeader","shotoffHeader","shotonHeader")])] <- 0 
 
-
+remove(groupedIncidents)
+remove(groupedIncidentHeader)
+remove(groupedIncidentShot)
+}
 write.csv(incidents,"data/incidents.csv", row.names = F)
 write.csv(player_stats,"data/player_stats.csv", row.names = F)
 write.csv(player_statsMult,"data/player_statsMult.csv", row.names = F)
