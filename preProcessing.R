@@ -41,7 +41,7 @@ node_to_dataframe <- function(n, key) {
 con <- dbConnect(SQLite(), dbname="./data/database.sqlite")
 
 # chooses season and league
-df <- dbGetQuery(con,"SELECT * FROM Match WHERE country_id IN ('1729','4769','7809','10257','21518') AND season IN ('2015/2016','2014/2015','2013/2014')")
+df <- dbGetQuery(con,"SELECT * FROM Match WHERE country_id IN ('1729','4769','7809','10257','21518') AND season IN ('2015/2016','2014/2015')")
 matches <- subset(df, select = c(id,country_id,season,stage,date,home_team_api_id,away_team_api_id,home_team_goal,away_team_goal,goal,shoton,shotoff,foulcommit,card,cross,corner,possession) )
 matches$date <- as.Date(matches$date,format="%Y-%m-%d")
 remove(df)

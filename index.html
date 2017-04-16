@@ -73,8 +73,7 @@
 	            	<h1 id="playerNameHeader" style="font-size:23px;font-weight: bold;">Robert Lewandowski</h1>
 	            	<image class="imageChild" id="playerPicture" x=0 y=0 src='http://cdn.sofifa.org/17/players/188545.png'></image>
 	            	
-	            	<select class="form-control selectpicker">
-	            	  <option>2013/2014</option>
+	            	<select id = "selectYear" class="form-control selectpicker">
 	            	  <option>2014/2015</option>
 	            	  <option selected>2015/2016</option>
 	            	  <option>All</option>
@@ -85,7 +84,7 @@
       
       		<div class="col-lg-10 col-md-9 col-sm-6 col-xs-12>">
       			<div class="row center-block" style="padding-top: 27px;">
-		      		<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block elementContains" height=307 width=317 >
+		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block elementContains" height=307 width=317 >
 		      			<div class="center-block elementBelow" >
 			      			<svg id="silhouette" height=307 width=317>	
 			      				<text id="textPercentage" x="37.7%" y="4%" font-size = "17" > Percentage of goals </text>
@@ -105,21 +104,42 @@
 		      			</div>
 		      		</div>
 
-		      		<div class = "col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block " >	
+		      		<div class = "col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block " >	
 		      			<div class="center-block" id="chart"  height=307 width=317 ></div>
 		      		</div>
 		      	</div>
 
 		      	<div class="row center-block" style="padding-top: 17px; padding-bottom: 17px;">
-		      		<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block text-center"  height=307 width=317 >
+		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block text-center"  height=307 width=317 >
 			      		<h2 style="font-size: 7;" >Most scored against</h2>
 			      		<div id="chartGoalTeam"></div>
 					</div>
 
-		      		<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 center-block" >
+		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block" >
+		      			
 			      		<svg id="pitch" width=387 height=200>
 			      		  <image  x=0 y=0 width=387 height=200 xlink:href='img/half_pitch.svg'></image>
+			      		  <g id="heatShots"> </g>
+			      		  <g id="goals"> </g>
+			      		  <g id="textGoals" style="font-size: 11;" text-anchor="middle"> 
+				      		  <text id="vsTextGoals" x="79.7%" y="67.7%"  style="font-weight: bold;" ></text>
+				      		  <text id="timeTextGoals" x="79.7%" y="74.7%" ></text>
+				      		  <text id="dateTextGoals" x="79.7%" y="81.7%"  ></text>
+				      		  <text id="typeTextGoals" x="79.7%" y="88.7%" ></text>
+			      		  </g>
 			      		</svg>
+
+			      		<button id="toggleHideGoals" type="button" class="btn btn-default" style="margin-left:19px;width:347px;" onclick="this.blur(); updateHideGoals();  ">Hide goals</button>
+		
+			      		<!--<select id="selectPositionShots" class="form-control selectpicker" style="margin-left:19px;width:347px;" >
+			      		  <option selected>Goals</option>
+			      		  <option> Off target </option>
+			      		  <option> Blocked Shots</option>
+			      		  <option> All </option>
+			      		</select>-->
+			      	
+			      		
+
 					</div>
 		      	</div>
       		</div>
@@ -187,6 +207,8 @@
     var typePercentage = (typeof typePercentage  !== 'undefined') ? typePercentage : "goalPercentage";
     // initiall season: 2015/2016
     var season = (typeof season !== 'undefined') ? season : "2015/2016";
+    // initial type goals: goals
+    var typeShots = (typeof typeShots !== 'undefined') ? typeShots : "goal";
    
     // ########## CROSSFILTER ##########
     var arrayHeader ;
@@ -199,6 +221,7 @@
     var typeDimension ;
     var againstDimension  ;
     var subtypeDimension ;
+    var idIncDimension;
     var teamGroup ;
     var averagePlayer = new Object();
     var chartTest;
@@ -304,6 +327,7 @@
 
     // Parse the date / time
     var parseDate = d3.time.format("%Y-%m-%d").parse
+    var formatDate = d3.time.format("%d %b %Y")
 
     function transformHalfPitch(lat){
       if(lat > heightPitchReal/2){
@@ -313,12 +337,12 @@
     }
 
     // ##########  DRAW FUNCTIONS ##########  
-    function drawRadar(cross,averagePlayer) {
+    function drawRadar(dimension,averagePlayer) {
 
-      function crossfilterToRadar(cross,variables,wholeData) {
+      function crossfilterToRadar(dimension,variables,wholeData) {
         var data = [];
         var average = [];
-        $.each(cross.dimension(function(d){return "";}).top(Infinity)[0], function(index, value) {
+        $.each(dimension.top(Infinity)[0], function(index, value) {
             if(variables.indexOf(index) > -1) {
               data.push({axis: index, value: value});
               var meanIndex = Math.round(averagePlayer[index]);
@@ -340,16 +364,42 @@
       }
       
       // problem: cannot hover over the one behind !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      RadarChart.draw("#chart", crossfilterToRadar(cross,axisVar,averagePlayer), config );
+      RadarChart.draw("#chart", crossfilterToRadar(dimension,axisVar,averagePlayer), config );
     }
 
-     function drawGoals(cross) {
+     function drawGoals(dimension) {
+     	//### DRAW HEAT MAP
+     	// resets filter for drawing heat map
+       dimension.filterAll();
+       
+       // computes total goal percentage for color
+       
+       var goalPercentage =  (arrayHeader[0].value + arrayShot[0].value)/ 
+       					  (arrayHeader[0].value + arrayHeader[1].value + arrayHeader[2].value +   
+       					   arrayShot[0].value + arrayShot[1].value + arrayShot[2].value)
+       
 
-       var goalBalls = d3.select("#pitch").selectAll("image")
-                                 .data(cross.dimension(function(d) { return "";}).top(Infinity))
+       var heatShots = d3.select("#heatShots").selectAll("circle")
+		            .data(dimension.top(Infinity))
+		            .enter()
+		            .append('circle')
+		            
+		heatShots.attr("cx", function (d) { return pitchScaleWidth( d.lon); })
+		            .attr("cy", function (d) { return pitchScaleHeight(transformHalfPitch(d.lat)); })
+		            .attr('opacity', '0.17')
+		            .attr('r', '7')
+		            .attr("pointer-events","none")
+		            .attr("fill", goalScaleHue(goalPercentage));
+
+		            //debugger;
+
+		// ### DRAW GOALS ###
+       dimension.filterExact("goal");
+
+       var goalBalls = d3.select("#goals").selectAll("image")
+                                 .data(dimension.top(Infinity))
                                  .enter()
-                                 .append('image')
-                                 .attr("class", "ball");
+                                 .append('image');
 
       goalBalls
        .attr("x", function (d) { return pitchScaleWidth( d.lon); })
@@ -357,10 +407,15 @@
        .attr('xlink:href',"img/ball.png")
        .attr('width', '17')
        .attr('height', '17')
-       .attr('opacity', '0.9');
+       .attr('transform', 'translate(-8.5,-8.5)')
+       .attr('opacity', '0.9')
+       .attr('id', function (d) { return d.id; });
+
+     goalBalls.on('mouseover', goalMouseOver ) 
+  	  		   .on('mouseout', goalMouseOut );
     }
 
-    function drawBarchart(cross,dimension,group){
+    function drawBarchart(dimension,group){
 
         chartTest = dc.barChart("#chartGoalTeam")
             .dimension(dimension)
@@ -385,11 +440,11 @@
                     //   .attr("fill","Coral");
                     chart.onClick(d);
                     // ATTENTION: problem if too quick !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    updateGoal(cross);
+                    updateGoal(dimension);
                 });
             });
 
-        chartTest.margins().bottom = 77;
+        chartTest.margins().bottom = 87;
 
         chartTest.yAxis().ticks(6);
 
@@ -400,7 +455,7 @@
        		.style("text-anchor", "end")
        		.attr("dx", "-.8em")
             .attr("dy", ".15em")
-            .attr("transform", "rotate(-57)" );
+            .attr("transform", "rotate(-47)" );
 
         
     }
@@ -497,16 +552,45 @@
     	drawMan();
     }
 
-    function updateGoal(cross, timeTransit = 307){
+    function updateHeatMap (dimension){
+     	
+     	// resets filter for drawing heat map
+       dimension.filterAll();
+       
+       // computes total goal percentage for color
+       var goalPercentage =  (arrayHeader[0].value + arrayShot[0].value)/ 
+       					  (arrayHeader[0].value + arrayHeader[1].value + arrayHeader[2].value +   
+       					   arrayShot[0].value + arrayShot[1].value + arrayShot[2].value)
 
-       var goalBalls = d3.select("#pitch").selectAll(".ball")
-                                 .data(cross.dimension(function(d) {  return "";}).top(Infinity))
-                                 ;
+	  var heatShots = d3.select("#heatShots").selectAll("circle")
+	                            .data(dimension.top(Infinity));
+	    
+	    heatShots.transition().attr("opacity","0");                        
+	    heatShots.exit().transition().attr("opacity","0").remove();
+	    heatShots.enter().append("circle").attr("opacity","0");
+		            
+		heatShots.attr("cx", function (d) { return pitchScaleWidth( d.lon); })
+		            .attr("cy", function (d) { return pitchScaleHeight(transformHalfPitch(d.lat)); })
+		            .attr('r', '7')
+		            .attr("pointer-events","none")
+		            .attr("fill", goalScaleHue(goalPercentage))
+		            .transition()
+		            .attr('opacity', '0.17');
+
+			
+		// puts back filter for next plots
+       dimension.filterExact("goal");
+
+    }
+
+    function updateGoal(dimension, timeTransit = 307){
+
+       var goalBalls = d3.select("#goals").selectAll("image")
+                                 .data(dimension.top(Infinity));
 
 
       goalBalls.exit().remove();
       goalBalls.enter().append("image")
-        .attr("class", "ball")
         .attr("x", pitchScaleWidth(widthPitchReal/2))
         .attr("y", pitchScaleHeight(11));                            
 
@@ -518,19 +602,44 @@
        .attr("y", function (d) { return pitchScaleHeight(transformHalfPitch(d.lat)); })
        .attr('width', '17')
        .attr('height', '17')
-       .attr('opacity', '0.9');
+       .attr('transform', 'translate(-8.5,-8.5)')
+       .attr('opacity', '0.9')
+       .attr('id', function (d) { return d.id; });;
+
+      goalBalls.on('mouseover', goalMouseOver ) 
+   	  		   .on('mouseout', goalMouseOut );
+    }
+
+    function updateHideGoals() {
+
+    	var d3This = d3.select("#toggleHideGoals");
+    	
+    	if (d3This.text() === "Hide goals" ) {
+    		d3This.text("Show Goals");
+    		d3.selectAll("#goals image")
+    		  .attr("pointer-events","none")
+    		  .transition()
+    		  .attr("visibility","hidden");
+
+    	} else {
+    		d3This.text("Hide goals");
+    		d3.selectAll("#goals image")
+    		  .attr("pointer-events","auto")
+    		  .transition()
+    		  .attr("visibility","visible");
+    	}
+
     }
 
     function updateAll(){
       //resets filter
-      playerDimension.filterAll();
-      // get the searched player
+      playerDimension.filterAll();      // get the searched player
       var playerNameSearch = $('#player_search_box').val();
 
       // Needs to deal with the fact that multiple names could be the same !!!!!!!!!!!!!!!!!!!
       // needs to add autocomplete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       // should show error if not in array !!!!!
-      crossPlayers.dimension(function(d) {  return "";}).top(Infinity).forEach( function (player) {
+      playerDimension.top(Infinity).forEach( function (player) {
         if (toTitleCase(player.player_name) === toTitleCase(playerNameSearch)){
         	playerID = player.player_api_id;
         	document.getElementById('playerPicture').src = 'http://cdn.sofifa.org/17/players/' + player.player_fifa_api_id + '.png';
@@ -542,20 +651,25 @@
 
       });
 
+      // draws the heatmap so take out filtering of type
+
+
+
       playerDimension.filterExact(playerID);
       playerIncDimension.filterExact(playerID);
 
-      drawRadar(crossPlayers,averagePlayer);
+      drawRadar(playerDimension,averagePlayer);
       
       // STRANE: has to regfroup if not strange things happen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       teamGroup = againstDimension.group();//.orderNatural();
-      drawBarchart(crossIncidents,againstDimension,teamGroup);
+      drawBarchart(againstDimension,teamGroup);
 
       arrayHeader = typeDimension.group().reduceSum(function(d) { return (d.subtype1==="header");}).all();
       arrayShot = typeDimension.group().reduceSum(function(d) { return !(d.subtype1==="header");}).all();
       drawMan() ;
 
-      updateGoal(crossIncidents,750);
+      updateGoal(typeDimension,750);
+      updateHeatMap(typeDimension);
 
       //if (all_genes.indexOf(search_gene) != -1){
         // zoom and highlight found gene 
@@ -632,6 +746,30 @@
 
     }    
 
+    function goalMouseOver (){
+    	var d3This = d3.select(this);
+    	d3.selectAll("#goals image").attr("opacity","0.27");
+    	d3This.attr("opacity","1");
+    	idIncDimension.filterExact(d3This.attr("id"));
+
+    	var arrayGoal = idIncDimension.top(Infinity)[0];
+    	d3.select("#vsTextGoals").text(arrayGoal.againstTeam);
+    	d3.select("#timeTextGoals").text(arrayGoal.elapsed + ((arrayGoal.elapsed_plus)? "+" + arrayGoal.elapsed_plus : "") + "min");
+    	d3.select("#dateTextGoals").text(formatDate(arrayGoal.date));
+    	d3.select("#typeTextGoals").text(arrayGoal.subtype1);
+    	
+    	
+	 }
+    	 	
+    function goalMouseOut (){
+    	
+    	d3.selectAll("#goals image").transition().attr("opacity","0.9");
+    	idIncDimension.filterAll();
+
+    	d3.selectAll("#textGoals text").text("");
+
+    }    
+
     // ############################# MAIN PROGRAMM #############################
 
     // ##########  LOAD PLAYER DATA ########## 
@@ -682,13 +820,7 @@
         d.birthday = parseDate(d.birthday);
         d.height = Math.round(+d.height);
         d.weight = Math.round((+d.weight)*0.453592);
-        d.goalShot = +d.goalShot;
-        d.shotoffShot = +d.shotoffShot;
-        d.shotonShot = +d.shotonShot;
-        d.goalHeader = +d.goalHeader;
-        d.shotoffHeader = +d.shotoffHeader;
-        d.shotonHeader = +d.shotonHeader;
-
+       
         for (var key in d) {
           if (i === 0){
             // first loop
@@ -708,7 +840,7 @@
       playerDimension.filterExact(playerID);
       
 
-      drawRadar(crossPlayers,averagePlayer);
+      drawRadar(playerDimension,averagePlayer);
 
       
       
@@ -734,11 +866,14 @@
         });
 
         crossIncidents = crossfilter(incidents);
+
         playerIncDimension = crossIncidents.dimension(function(d) {return d.player1 ;});
+        idIncDimension = crossIncidents.dimension(function(d) {return d.id ;});
         typeDimension = crossIncidents.dimension(function(d) {return d.type ;});
         againstDimension = crossIncidents.dimension(function(d) {return d.againstTeam ;});
         subtypeDimension = crossIncidents.dimension(function(d) {return d.subtype1 ;});
         seasonIncDimension = crossIncidents.dimension(function(d) {return d.season ;});
+
         teamGroup =  againstDimension.group().orderNatural();
 
         //ex: lewandowski
@@ -752,9 +887,9 @@
         arrayHeader = typeDimension.group().reduceSum(function(d) { return (d.subtype1==="header");}).all();
         drawMan();
 
-        drawBarchart(crossIncidents,againstDimension,teamGroup)
+        drawBarchart(againstDimension,teamGroup)
 
-        drawGoals(crossIncidents);
+        drawGoals(typeDimension);
         
       });
     });
@@ -873,9 +1008,11 @@
 
    	// ###### UPDATE SEASON ######
    	$(function() {
-   	  $('.selectpicker').on('change', function(){
+   	  $('#selectYear').on('change', function(){
+   	  	// takes out blue around
+   	  	$(this).blur();
    	    season = $(this).find("option:selected").val();
-   	    //debugger;
+
    	    if (season === "All"){
    	    	// resets filter so that thakes all into account
    	    	seasonIncDimension.filterAll();
@@ -886,6 +1023,30 @@
    	  });
    	  
    	});
+
+   	// ###### UPDATE POSITION SHOTS ######
+   	/*
+   	$(function() {
+   	  $('#selectPositionShots').on('change', function(){
+   	  	// takes out blue around
+   	  	$(this).blur();
+   	    typeShots = $(this).find("option:selected").val();
+
+   	    if (typeShots === "All"){
+   	    	// resets filter so that thakes all into account
+   	    	seasonIncDimension.filterAll();
+   	    } else if (typeShots === "Goals"){
+   	    	typeDimension.filterExact("goal");
+   	    } else if (typeShots === "Off target"){
+   	    	typeDimension.filterExact("shotoff");
+   	    } else if (typeShots === "Blocked Shots"){
+   	    	typeDimension.filterExact("shoton");
+   	    }
+   	    
+   	  });
+   	  
+   	});
+   	*/
 
    	// ###### UPDATE PLAYER ######
    	// submit player button 
