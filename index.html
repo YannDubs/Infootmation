@@ -2,8 +2,6 @@
 <html lang="en">
   <head>
 
-
-
     <meta charset="utf-8">
     <meta name="og:title" content="Infootmation: European football players visualisation">
     <meta name="og:description" content="A visualization of interesting statistics for football players of the biggest euopean leagues.">
@@ -20,17 +18,20 @@
 
     <!-- BOOTRSTAP CDN -->
     <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="styles/jquery.ui.1.10.0.ie.css" rel="stylesheet"/>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="styles/dc.min.css">
-    <link rel="stylesheet" href="styles/radar-chart.css">
+    <link rel="stylesheet" href="styles/dc.min.css" type="text/css">
+    <link rel="stylesheet" href="styles/radar-chart.css" type="text/css">
+
+
 
     <!-- Le styles -->
-    <Link  rel="stylesheet" href="styles/main.css" type="text/css">
-
-    
+    <Link  rel="stylesheet" href="styles/main.css" type="text/css">  
    
   </head>
 
@@ -46,11 +47,10 @@
             <img src="img/T3.png" width="207" height="25" alt="">
           </a>
         </div>
-
-        
+       
         <div class="navbar-search pull-right navbar-form">
           <div class="input-group">
-            <input id='player_search_box' type="text" class="form-control mr-sm-2" placeholder="Player" aria-describedby="sizing-addon2">
+            <input id='player_search_box' type="text" class="autocomplete form-control mr-sm-2" placeholder="Player" >
 
             <div id='player_search_button' class="input-group-btn" data-toggle="buttons" >
               <label id='player_search_submit' class="btn btn-default my-2 my-sm-0" onclick="updateAll(); ">
@@ -66,6 +66,7 @@
     <div class="container-fluid">
 
       <!-- ################# CHART ################# -->
+
 
       <div class="row">
       		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12>">
@@ -104,12 +105,33 @@
 		      			</div>
 		      		</div>
 
-		      		<div class = "col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block " >	
-		      			<div class="center-block" id="chart"  height=307 width=317 ></div>
+		      		<div class = "col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block " style="padding-top: 17px; padding-bottom: 17px;">	
+		      			<div class="center-block elementBelow" >
+		      				<div class="center-block" id="chart"  height=307 width=317  ></div>
+		      			</div>
+
+		      			<div class="elementAbove" >
+			      			<select id = "selectRadar" class="form-control selectpicker" style="margin-top:-107px;margin-left:-27px;width:77px;">
+			      			  <option>Best 5</option>
+			      			  <option selected>Default</option>
+			      			  <option>Worst 5</option>
+			      			</select>
+		      			</div>
+
+		      			<div class="elementAbove" style="pointer-events: none; " >
+			      			<h3 style="margin-left:-207px;margin-top:-27px;font-size: 15px;color: rgb(36, 144, 189);">
+			      			  Player
+			      			</h3>
+			      			<h3 style="margin-left:-207px;margin-top:-5px;font-size: 15px;color: rgb(196, 232, 180);">
+			      			  Average
+			      			</h3>
+		      			</div>
+
+
 		      		</div>
 		      	</div>
 
-		      	<div class="row center-block" style="padding-top: 17px; padding-bottom: 17px;">
+		      	<div class="row center-block" style="padding-top: 17px; padding-bottom: 17px; ">
 		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block text-center"  height=307 width=317 >
 			      		<h2 style="font-size: 7;" >Most scored against</h2>
 			      		<div id="chartGoalTeam"></div>
@@ -186,12 +208,11 @@
     <script type="text/javascript" src="scripts/crossfilter.js"></script>
     <script type="text/javascript" src="scripts/dc.min.js"></script>
 
-    <script
-      src="https://code.jquery.com/jquery-3.1.1.min.js"
-      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-      crossorigin="anonymous"></script>
+    <script src="scripts/jquery-3.1.1.min.js"></script>
+      <script src="scripts/jquery-ui.min.js" ></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>    
+    <!-- <script type="text/javascript" src="scripts/typeahead.bundle.js"></script>-->
 
    <script type="text/javascript" src="scripts/radar-chart.js"></script>
 
@@ -209,6 +230,8 @@
     var season = (typeof season !== 'undefined') ? season : "2015/2016";
     // initial type goals: goals
     var typeShots = (typeof typeShots !== 'undefined') ? typeShots : "goal";
+    // initial type radar: default
+    var typeRadar = (typeof typeRadar !== 'undefined') ? typeRadar : "Default";
    
     // ########## CROSSFILTER ##########
     var arrayHeader ;
@@ -230,6 +253,8 @@
     // ROnaldo : 30893 / Lewandowski : 93447 / MEssi: 30981
     // intital player iwth default
     var playerID = (typeof playerID !== 'undefined') ? playerID : 93447;
+    // names for auto complete
+    var allNames = [];
 
     // ########## PITCH ##########
     var heightPitchImage = 200;
@@ -266,6 +291,7 @@
     var goalScaleHue = function(noScaleT) {return d3.interpolateYlGnBu(noScaleT*2.7);};
     //var goalScaleHue = function(noScaleT) {return d3.interpolateYlOrRd(noScaleT*2.7);};
     var targetScaleHue = function(noScaleT) {return d3.interpolateYlGnBu(noScaleT/0.37-0.97);};
+    var colorFnc = function(index){ return goalScaleHue(0.23-0.14*index);};
 
     // ### TRANSPARENCY SCALE ###
     var goalScaleTransparency = function(noScaleT) {return 0.67 + noScaleT*0.33;};
@@ -336,35 +362,84 @@
       return lat;
     }
 
+    function crossfilterToRadarDefault(dimension,variables,wholeData) {
+      var data = [];
+      var average = [];
+      $.each(dimension.top(Infinity)[0], function(index, value) {
+          if(variables.indexOf(index) > -1) {
+            data.push({axis: index, value: value});
+            var meanIndex = Math.round(averagePlayer[index]);
+            average.push({axis: index, value: meanIndex });
+          }
+      }); 
+      return [data,average];
+    }
+
+    function crossfilterToRadarDelta(dimension,wholeData,type) {
+      var factorBest = (type === "Best 5") ? 1 : -1;
+      var data = [{axis: "", value: 0, delta:0, averageValue:0 },
+      			  {axis: "", value: 0, delta:0, averageValue:0 },
+      			  {axis: "", value: 0, delta:0, averageValue:0 },
+      			  {axis: "", value: 0, delta:0, averageValue:0 },
+      			  {axis: "", value: 0, delta:0, averageValue:0 }];
+      var currentDelta;
+      var averageFive = [];
+      var meanValue ;
+      var playerFive = [];
+      
+      $.each(dimension.top(Infinity)[0], function(index, value) {
+      	  if(value<=100 && value >= 0){
+      	  	//show only what is possible on chart
+      	  	meanValue = Math.round(averagePlayer[index]);
+      	  	currentDelta = factorBest*(value - meanValue);
+      	  	if (currentDelta > data[0].delta){
+      	  		// if bigger than the smallest
+      	  		data[0].delta = currentDelta;
+      	  		data[0].averageValue = meanValue;
+      	  		data[0].axis = index;
+      	  		data[0].value = value;
+      	  		// sort the objects
+      	  		data.sort(function(a,b){ return ((a.delta < b.delta) ? -1 : ((a.delta == b.delta) ? 0 : 1));});
+      	  	}
+      	  }
+          
+      }); 
+
+      for (var i = 0; i < data.length; i++) {
+          playerFive.push({axis: data[i].axis, value: data[i].value});
+          averageFive.push({axis: data[i].axis, value: data[i].averageValue });
+      }
+
+      return [playerFive,averageFive];
+    }
+
     // ##########  DRAW FUNCTIONS ##########  
     function drawRadar(dimension,averagePlayer) {
 
-      function crossfilterToRadar(dimension,variables,wholeData) {
-        var data = [];
-        var average = [];
-        $.each(dimension.top(Infinity)[0], function(index, value) {
-            if(variables.indexOf(index) > -1) {
-              data.push({axis: index, value: value});
-              var meanIndex = Math.round(averagePlayer[index]);
-              average.push({axis: index, value: meanIndex });
-            }
-        }); 
-        return [data,average];
-      }
-
-      // Should fix axes for comparaison !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      var axisVar = ["shot_power","finishing","dribbling","acceleration","crossing"];
-
       var config = {
+      	factorLegend: 1.03,
         w: stdWidth,
         h: stdHeight,
-        maxValue: 100
+        maxValue: 100,
+        factor: 0.83,
+        color: colorFnc
         //levels: 6,
         //ExtraWidthX: 300
       }
+
+      if (typeRadar === "Default"){
+
+      	var axisVar = ["overall_rating","finishing","dribbling","acceleration","positioning"];
+
+      	RadarChart.draw("#chart", crossfilterToRadarDefault(dimension,axisVar,averagePlayer), config );
+
+      } else {
+      	RadarChart.draw("#chart", crossfilterToRadarDelta(dimension,averagePlayer,typeRadar), config );
+	  }
+
       
-      // problem: cannot hover over the one behind !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      RadarChart.draw("#chart", crossfilterToRadar(dimension,axisVar,averagePlayer), config );
+
+      //d3.selectAll(".radar-chart .axis .legend").style("font-size","13px")
     }
 
      function drawGoals(dimension) {
@@ -390,8 +465,6 @@
 		            .attr('r', '7')
 		            .attr("pointer-events","none")
 		            .attr("fill", goalScaleHue(goalPercentage));
-
-		            //debugger;
 
 		// ### DRAW GOALS ###
        dimension.filterExact("goal");
@@ -427,6 +500,7 @@
             .outerPadding(0.1)
             .width(417)
             .height(227)
+            .colors(colorFnc)
             .on('renderlet', function(chart) {
                 chart.selectAll('rect').on("click", function(d) {
                     // chart.selectAll('rect')
@@ -820,6 +894,8 @@
         d.birthday = parseDate(d.birthday);
         d.height = Math.round(+d.height);
         d.weight = Math.round((+d.weight)*0.453592);
+
+        allNames.push(d.player_name);
        
         for (var key in d) {
           if (i === 0){
@@ -842,7 +918,7 @@
 
       drawRadar(playerDimension,averagePlayer);
 
-      
+
       
       // ##########  LOAD INCIDENTS DATA ########## 
       d3.csv("data/incidents.csv", function(error,incidents){
@@ -892,6 +968,19 @@
         drawGoals(typeDimension);
         
       });
+
+      // ### AUTO COMPLETE ###
+      $("#player_search_box").autocomplete({
+      	//shows only 10 results
+      	source: function(request, response) {
+	        var results = $.ui.autocomplete.filter(allNames, request.term);
+
+	        response(results.slice(0, 10));
+    		},
+      	selectFirst :true,
+		minLength: 4
+      });
+
     });
 
 	// ##########  AFTER LOAD PLAYER DATA ########## 
@@ -1025,7 +1114,7 @@
    	});
 
    	// ###### UPDATE POSITION SHOTS ######
-   	/*
+   	
    	$(function() {
    	  $('#selectPositionShots').on('change', function(){
    	  	// takes out blue around
@@ -1046,9 +1135,23 @@
    	  });
    	  
    	});
-   	*/
+
+   	// ###### UPDATE RADAR ######
+   	
+   	$(function() {
+   	  $('#selectRadar').on('change', function(){
+   	  	// takes out blue around
+   	  	$(this).blur();
+   	    typeRadar = $(this).find("option:selected").val();
+   	    drawRadar(playerDimension,averagePlayer);
+   	    
+   	  });
+   	  
+   	});
+
 
    	// ###### UPDATE PLAYER ######
+
    	// submit player button 
    	$("#player_search_box").keyup(function (e) {
    	      // if pressed enter or return
