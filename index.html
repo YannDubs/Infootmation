@@ -111,7 +111,7 @@
 		      			</div>
 
 		      			<div class="elementAbove" >
-			      			<select id = "selectRadar" class="form-control selectpicker" style="margin-top:-107px;margin-left:-27px;width:77px;">
+			      			<select id = "selectRadar" class="form-control selectpicker" style="margin-top:-111px;margin-left:-43px;width:93px;">
 			      			  <option>Best 5</option>
 			      			  <option selected>Default</option>
 			      			  <option>Worst 5</option>
@@ -417,7 +417,7 @@
     function drawRadar(dimension,averagePlayer) {
 
       var config = {
-      	factorLegend: 1.03,
+      	factorLegend: 1.01,
         w: stdWidth,
         h: stdHeight,
         maxValue: 100,
@@ -813,7 +813,8 @@
     	  .text("100%")
     	  .attr("fill","white")
     	  .attr("font-weight", "normal")
-    	  .attr("x", lastPositionMovingText) ;
+    	  .attr("x", "86.7%") ;
+    	  //.attr("x", lastPositionMovingText) ;
 
     	d3.select("#headerPercentageText").text("");
     	d3.select("#shotPercentageText").text("")
