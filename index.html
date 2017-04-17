@@ -91,7 +91,7 @@
 			      		  		<circle class = "circleHover" id ="shotCircle" cx="173" cy="237" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px"/>
 			      		  		<circle class = "circleHover" id ="headerCircle" cx="133" cy="57" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px" />
 			      		  		<text id="headerPercentageText" x="133" y="57" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
-			      		  		<text class="textUnits" id="headerPercentageUnit" x="133" y="69" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+			      		  		<text class="textUnits" id="headerPercentageUnit" x="133" y="65" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
 			      		  		<text id="shotPercentageText" x="174.7" y="237" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
 			      		  		<text class="textUnits" id="shotPercentageUnit" x="174.7" y="249" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
 			      		  		<text id="playerHeight" x="0" y="53%" font-size = "17" > 185cm</text>
@@ -159,6 +159,7 @@
 				      		  <text x="47" y="163.7" >= any shot</text>
 				      		  <image x="37" y="177" xlink:href="img/ball.png" width="17" height="17" transform="translate(-8.5,-8.5)" opacity="0.9"></image>
 				      		  <text x="47" y="181.7" >= goals</text>
+				      		  <text id= "percentageKey" x="97" y="181.7" >(80%)</text>
 
 			      		  </g>
 
@@ -481,6 +482,7 @@
 
 		// updates key color
 		d3.select("#heatKey").transition().attr("fill", goalScaleHue(goalPercentage));
+		d3.select("#percentageKey").text("("+Math.round(goalPercentage*100) + "%)");
 
 		// ### DRAW GOALS ###
        dimension.filterExact("goal");
@@ -533,6 +535,7 @@
                     chart.onClick(d);
                     // ATTENTION: problem if too quick !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     updateGoal(dimension);
+                    updateHeatMap(typeDimension);
                 });
             });
 
@@ -684,6 +687,7 @@
 
        //changes color of key
        d3.select("#heatKey").transition().attr("fill", goalScaleHue(goalPercentage));
+       d3.select("#percentageKey").text("("+Math.round(goalPercentage*100) + "%)");
 
     }
 
