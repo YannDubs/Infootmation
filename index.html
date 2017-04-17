@@ -101,6 +101,7 @@
 							</svg>	
 						</div>
 
+
 						<div class="elementAbove" >
 			      			<button id="togglePercentage" type="button" class="btn btn-default"  onclick="this.blur(); updatePercentage();  ">On target</button>
 		      			</div>
@@ -152,6 +153,14 @@
 				      		  <text id="typeTextGoals" x="79.7%" y="88.7%" ></text>
 			      		  </g>
 			      		  <image class="elementAbove helpHoverOver" x="16.7%" y="29.7%" height=87 width=87  xlink:href='img/hoverOverUp.svg' style = "pointer-events: none;" ></image>
+			      		  <g id="keyPitch"> 
+			      		  	
+				      		  <circle id="heatKey" cx="37" cy="160" opacity="0.77" r="7" pointer-events="none" fill="rgb(49, 164, 193)"></circle>
+				      		  <text x="47" y="163.7" >= any shot</text>
+				      		  <image x="37" y="177" xlink:href="img/ball.png" width="17" height="17" transform="translate(-8.5,-8.5)" opacity="0.9"></image>
+				      		  <text x="47" y="181.7" >= goals</text>
+
+			      		  </g>
 
 			      		</svg>
 
@@ -470,6 +479,9 @@
 		            .attr("pointer-events","none")
 		            .attr("fill", goalScaleHue(goalPercentage));
 
+		// updates key color
+		d3.select("#heatKey").transition().attr("fill", goalScaleHue(goalPercentage));
+
 		// ### DRAW GOALS ###
        dimension.filterExact("goal");
 
@@ -490,6 +502,8 @@
 
      goalBalls.on('mouseover', goalMouseOver ) 
   	  		   .on('mouseout', goalMouseOut );
+
+
     }
 
     function drawBarchart(dimension,group,withClickMe){
@@ -667,6 +681,9 @@
 			
 		// puts back filter for next plots
        dimension.filterExact("goal");
+
+       //changes color of key
+       d3.select("#heatKey").transition().attr("fill", goalScaleHue(goalPercentage));
 
     }
 
@@ -1034,7 +1051,7 @@
 	        response(results.slice(0, 10));
     		},
       	selectFirst :true,
-		minLength: 4
+		minLength: 3
       });
 
     });
