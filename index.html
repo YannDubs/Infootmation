@@ -760,7 +760,7 @@
     function circleMouseOver (){
     	var d3This = d3.select(this);
     	lastOpacity = d3This.style("opacity");
-    	var nGoals = Math.round(goalScaleRadius.invert(parseFloat(d3This.style("r")))).toString();
+    	var nGoals = Math.round(goalScaleRadius.invert(parseFloat(d3This.attr("r")))).toString();
     	var percentage = Math.round(1000*goalScaleTransparencyInvert(d3This.style("opacity")))/10; 
     	lastPositionMovingText = d3.select("#movingPercentage").attr('x'); // if wants to store last
     	var startAxis = parseFloat(d3.select("#silhouette rect").attr("x"));
