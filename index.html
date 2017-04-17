@@ -66,9 +66,7 @@
     <div class="container-fluid">
 
       <!-- ################# CHART ################# -->
-
-
-      <div class="row">
+         <div class="row">
       		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12>">
 	      		<div class="center-block textBox" style="width:177px;">
 	            	<h1 id="playerNameHeader" style="font-size:23px;font-weight: bold;">Robert Lewandowski</h1>
@@ -92,11 +90,14 @@
 			       		  		<image x="47%" y="53%" height=267 width=317 transform="translate(-157.66,-133.5)" xlink:href='img/silhouette2.svg'></image>
 			      		  		<circle class = "circleHover" id ="shotCircle" cx="173" cy="237" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px"/>
 			      		  		<circle class = "circleHover" id ="headerCircle" cx="133" cy="57" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px" />
-			      		  		<text id="headerPercentageText" x="133" y="63" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
-			      		  		<text id="shotPercentageText" x="174.7" y="243" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+			      		  		<text id="headerPercentageText" x="133" y="57" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+			      		  		<text class="textUnits" id="headerPercentageUnit" x="133" y="69" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+			      		  		<text id="shotPercentageText" x="174.7" y="237" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+			      		  		<text class="textUnits" id="shotPercentageUnit" x="174.7" y="249" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
 			      		  		<text id="playerHeight" x="0" y="53%" font-size = "17" > 185cm</text>
 			      		  		<text id="playerWeight" x="47%" y="303" font-size = "17" > 79kg</text>
 								<g id="circlesLegend"> </g>
+								<image class="elementAbove helpHoverOver" x="63%" y="59.7%" height=87 width=87  xlink:href='img/hoverOverDown.svg' style = "pointer-events: none;" ></image>
 							</svg>	
 						</div>
 
@@ -113,7 +114,7 @@
 		      			<div class="elementAbove" >
 			      			<select id = "selectRadar" class="form-control selectpicker" style="margin-top:-111px;margin-left:-43px;width:93px;">
 			      			  <option>Best 5</option>
-			      			  <option selected>Default</option>
+			      			  <option selected>General</option>
 			      			  <option>Worst 5</option>
 			      			</select>
 		      			</div>
@@ -134,7 +135,8 @@
 		      	<div class="row center-block" style="padding-top: 17px; padding-bottom: 17px; ">
 		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block text-center"  height=307 width=317 >
 			      		<h2 style="font-size: 7;" >Most scored against</h2>
-			      		<div id="chartGoalTeam"></div>
+			      		<div id="chartGoalTeam" class="elementBelow"></div>
+			      		
 					</div>
 
 		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block" >
@@ -149,6 +151,8 @@
 				      		  <text id="dateTextGoals" x="79.7%" y="81.7%"  ></text>
 				      		  <text id="typeTextGoals" x="79.7%" y="88.7%" ></text>
 			      		  </g>
+			      		  <image class="elementAbove helpHoverOver" x="16.7%" y="29.7%" height=87 width=87  xlink:href='img/hoverOverUp.svg' style = "pointer-events: none;" ></image>
+
 			      		</svg>
 
 			      		<button id="toggleHideGoals" type="button" class="btn btn-default" style="margin-left:19px;width:347px;" onclick="this.blur(); updateHideGoals();  ">Hide goals</button>
@@ -229,9 +233,9 @@
     // initiall season: 2015/2016
     var season = (typeof season !== 'undefined') ? season : "2015/2016";
     // initial type goals: goals
-    var typeShots = (typeof typeShots !== 'undefined') ? typeShots : "goal";
+    //var typeShots = (typeof typeShots !== 'undefined') ? typeShots : "goal";
     // initial type radar: default
-    var typeRadar = (typeof typeRadar !== 'undefined') ? typeRadar : "Default";
+    var typeRadar = (typeof typeRadar !== 'undefined') ? typeRadar : "General";
    
     // ########## CROSSFILTER ##########
     var arrayHeader ;
@@ -427,7 +431,7 @@
         //ExtraWidthX: 300
       }
 
-      if (typeRadar === "Default"){
+      if (typeRadar === "General"){
 
       	var axisVar = ["overall_rating","finishing","dribbling","acceleration","positioning"];
 
@@ -488,7 +492,7 @@
   	  		   .on('mouseout', goalMouseOut );
     }
 
-    function drawBarchart(dimension,group){
+    function drawBarchart(dimension,group,withClickMe){
 
         chartTest = dc.barChart("#chartGoalTeam")
             .dimension(dimension)
@@ -531,6 +535,15 @@
             .attr("dy", ".15em")
             .attr("transform", "rotate(-47)" );
 
+       if (withClickMe){
+	       d3.select("#chartGoalTeam svg").append("image")
+	       		.attr("class","elementAbove")
+	       		.attr('xlink:href',"img/clickMe.svg")
+	       		.attr("x","97")
+	       		.attr("y","-16.3")
+	       		.attr("width","97")
+	       		.attr("height","97");
+       	}
         
     }
 
@@ -707,6 +720,10 @@
 
     function updateAll(){
       //resets filter
+
+      //don't show all hover over text
+      d3.selectAll(".helpHoverOver").attr("visibility","hidden");
+
       playerDimension.filterAll();      // get the searched player
       var playerNameSearch = $('#player_search_box').val();
 
@@ -736,7 +753,7 @@
       
       // STRANE: has to regfroup if not strange things happen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       teamGroup = againstDimension.group();//.orderNatural();
-      drawBarchart(againstDimension,teamGroup);
+      drawBarchart(againstDimension,teamGroup,false);
 
       arrayHeader = typeDimension.group().reduceSum(function(d) { return (d.subtype1==="header");}).all();
       arrayShot = typeDimension.group().reduceSum(function(d) { return !(d.subtype1==="header");}).all();
@@ -744,6 +761,7 @@
 
       updateGoal(typeDimension,750);
       updateHeatMap(typeDimension);
+
 
       //if (all_genes.indexOf(search_gene) != -1){
         // zoom and highlight found gene 
@@ -755,15 +773,46 @@
 
     // ### INTERACTIVE: ON ... FUNCTION ###
     var lastOpacity;
-    var lastPositionMovingText ; //= "86.7%";
+    //var lastPositionMovingText ; //= "86.7%";
 
     function circleMouseOver (){
     	var d3This = d3.select(this);
-    	lastOpacity = d3This.style("opacity");
-    	var nGoals = Math.round(goalScaleRadius.invert(parseFloat(d3This.attr("r")))).toString();
-    	var percentage = Math.round(1000*goalScaleTransparencyInvert(d3This.style("opacity")))/10; 
-    	lastPositionMovingText = d3.select("#movingPercentage").attr('x'); // if wants to store last
+
+    	var nGoal; 
+    	var nShoton; 
+    	var nShotoff;
+
+    	if (d3This.attr("id") === "headerCircle"){
+    		nGoal =  arrayHeader[0].value;
+    		nShotoff = arrayHeader[1].value;   
+    		nShoton = arrayHeader[2].value;
+
+    	} else if (d3This.attr("id") === "shotCircle"){
+    		nGoal =  arrayShot[0].value;
+    		nShotoff = arrayShot[1].value;   
+    		nShoton = arrayShot[2].value;
+
+    	}
+    	var total = nGoal + nShotoff + nShoton; 
+
+    	var textUnits;
+    	var shots;
+    	if (typePercentage === "goalPercentage"){
+    		textUnits = "goals";
+    		shots= (nGoal) ;
+
+    	} else if (typePercentage === "targetPercentage"){
+    		textUnits = "On target";
+    		shots = (nShoton+nGoal) ;
+    	}
+    	var percentage = Math.round(1000*shots/total)/10;
+
+    	//lastOpacity = d3This.style("opacity");
+    	//var total = Math.round(goalScaleRadius.invert(parseFloat(d3This.attr("r")))).toString();
+    	//var percentage = Math.round(1000*goalScaleTransparencyInvert(d3This.style("opacity")))/10; 
+    	//lastPositionMovingText = d3.select("#movingPercentage").attr('x'); // if wants to store last
     	var startAxis = parseFloat(d3.select("#silhouette rect").attr("x"));
+    	lastOpacity = goalScaleTransparency(percentage/100);
 
     	d3This.transition()
     		  .attr("opacity","1")
@@ -773,11 +822,12 @@
     	  .transition()
     	  .attr("visibility", "hidden");
 
-	 	d3.selectAll("#nShotsCircles")
+	 	d3.select("#nShotsCircles")
 	 	  .transition()
-	 	  .text(nGoals)
-	 	  .attr("x", 86.7 - 2*nGoals.length + "%") // moves to be in the midle
-	 	  .attr("visibility","visible");
+	 	  .text(total)
+	 	  .attr("x", (86.7 - 2*total.toString().length) + "%"); // moves to be in the midle
+	 	
+	 	d3.selectAll(".textCircles").attr("visibility","visible");
 
 	 	d3.select("#movingPercentage")
 	 	  .transition()
@@ -787,9 +837,11 @@
 	 	  .attr("x", startAxis + (89.7-startAxis)*percentage / 100+"%") ;
 
 	 	if (d3This.attr("id") === "shotCircle") {
-	 		d3.select("#shotPercentageText").transition().text(percentage + "%").attr("font-size", 2.7*Math.sqrt(parseFloat(d3This.style("r"))));
+	 		d3.select("#shotPercentageText").transition().text(shots).attr("font-size", 2.7*Math.sqrt(parseFloat(d3This.style("r"))));
+	 		d3.select("#shotPercentageUnit").transition().text(textUnits).attr("font-size", 1.9*Math.sqrt(parseFloat(d3This.style("r"))));
 	 	} else {
-	 		d3.select("#headerPercentageText").transition().text(percentage + "%").attr("font-size", 2.7*Math.sqrt(parseFloat(d3This.style("r"))));
+	 		d3.select("#headerPercentageText").transition().text(shots).attr("font-size", 2.7*Math.sqrt(parseFloat(d3This.style("r"))));
+	 		d3.select("#headerPercentageUnit").transition().text(textUnits).attr("font-size", 1.9*Math.sqrt(parseFloat(d3This.style("r"))));
 	 	}
 	 	
     }
@@ -804,9 +856,11 @@
     	  .transition()
     	  .attr("visibility", "visible");
 
-    	d3.selectAll("#nShotsCircles")
+    	d3.selectAll(".textCircles")
     	  .transition()
     	  .attr("visibility","hidden");
+
+    	
 
     	d3.select("#movingPercentage")
     	  .transition()
@@ -817,7 +871,8 @@
     	  //.attr("x", lastPositionMovingText) ;
 
     	d3.select("#headerPercentageText").text("");
-    	d3.select("#shotPercentageText").text("")
+    	d3.select("#shotPercentageText").text("");
+    	d3.selectAll(".textUnits").text("");
 
     }    
 
@@ -964,7 +1019,7 @@
         arrayHeader = typeDimension.group().reduceSum(function(d) { return (d.subtype1==="header");}).all();
         drawMan();
 
-        drawBarchart(againstDimension,teamGroup)
+        drawBarchart(againstDimension,teamGroup,true)
 
         drawGoals(typeDimension);
         
@@ -1085,9 +1140,19 @@
     d3.select('#circlesLegend').append("text")
     	.text("7")
     	.attr("id", "nShotsCircles")
+    	.attr("class", "textCircles")
     	.attr("x", "84.7%")
-    	.attr("y", "28.3%")
+    	.attr("y", "25.3%")
     	.attr("font-size", "24")
+    	.attr("fill", "grey")
+    	.attr("visibility", "hidden");
+
+    d3.select('#circlesLegend').append("text")
+    	.text("total shots")
+    	.attr("class", "textCircles")
+    	.attr("x", "77.7%")
+    	.attr("y", "29.3%")
+    	.attr("font-size", "13")
     	.attr("fill", "grey")
     	.attr("visibility", "hidden");
 
@@ -1115,7 +1180,7 @@
    	});
 
    	// ###### UPDATE POSITION SHOTS ######
-   	
+   	/*
    	$(function() {
    	  $('#selectPositionShots').on('change', function(){
    	  	// takes out blue around
@@ -1135,7 +1200,7 @@
    	    
    	  });
    	  
-   	});
+   	});*/
 
    	// ###### UPDATE RADAR ######
    	
