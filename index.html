@@ -86,7 +86,7 @@
 		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block elementContains" height=307 width=317 >
 		      			<div class="center-block elementBelow" >
 			      			<svg id="silhouette" height=307 width=317>	
-			      				<text id="textPercentage" x="37.7%" y="4%" font-size = "17" > Percentage of goals </text>
+			      				<text id="textPercentage" x="37.7%" y="4%" font-size = "17px" > Percentage of goals </text>
 			       		  		<image x="47%" y="53%" height=267 width=317 transform="translate(-157.66,-133.5)" xlink:href='img/silhouette2.svg'></image>
 			      		  		<circle class = "circleHover" id ="shotCircle" cx="173" cy="237" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px"/>
 			      		  		<circle class = "circleHover" id ="headerCircle" cx="133" cy="57" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px" />
@@ -135,7 +135,7 @@
 
 		      	<div class="row center-block" style="padding-bottom: 17px; ">
 		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block text-center"  height=307 width=317 >
-			      		<h2 style="font-size: 7;" >Most scored against</h2>
+			      		<h2  >Most scored against</h2>
 			      		<div id="chartGoalTeam" class="elementBelow"></div>
 			      		
 					</div>
@@ -745,7 +745,9 @@
       //don't show all hover over text
       d3.selectAll(".helpHoverOver").attr("visibility","hidden");
 
-      playerDimension.filterAll();      // get the searched player
+      // draws the heatmap so take out filtering of type
+      playerDimension.filterAll();     
+       // get the searched player
       var playerNameSearch = $('#player_search_box').val();
 
       // Needs to deal with the fact that multiple names could be the same !!!!!!!!!!!!!!!!!!!
@@ -763,12 +765,13 @@
 
       });
 
-      // draws the heatmap so take out filtering of type
-
-
+      
 
       playerDimension.filterExact(playerID);
       playerIncDimension.filterExact(playerID);
+
+      // ### UPDATE GENERAL STATS ###
+
 
       drawRadar(playerDimension,averagePlayer);
       

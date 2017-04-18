@@ -6,6 +6,8 @@ library(magrittr)
 library(purrr)
 library(pander)
 library(xml2)
+library(rvest)
+library(stringr)
 
 ## GLOBAL OPTIONS / VAR ##
 panderOptions('table.split.table', Inf)
@@ -216,6 +218,4 @@ write.csv(player_stats,"data/player_stats.csv", row.names = F)
 write.csv(player_statsMult,"data/player_statsMult.csv", row.names = F)
 write.csv(country,"data/country.csv", row.names = F)
 write.csv(team,"data/team.csv", row.names = F)
-
-
 
