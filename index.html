@@ -71,12 +71,21 @@
 	      		<div class="center-block textBox" style="width:177px;">
 	            	<h1 id="playerNameHeader" style="font-size:23px;font-weight: bold;">Robert Lewandowski</h1>
 	            	<image class="imageChild" id="playerPicture" x=0 y=0 src='http://cdn.sofifa.org/17/players/188545.png'></image>
+
 	            	
 	            	<select id = "selectYear" class="form-control selectpicker">
 	            	  <option>2014/2015</option>
 	            	  <option selected>2015/2016</option>
 	            	  <option>All</option>
 	            	</select>
+
+                <div class = "infoPlayer">
+                    <h5 id="Birdthday" font-size="13px" >21 Aug 1988</h5>
+                    <h5 id="Team">FC Bayern Munich</h5>
+                    <h5 id="Position">Striker</h5>                    
+                    <h5 id="Value">Value: &euro; 71M</h5>
+                    <h5 id="National">National team: Poland</h5>
+                </div>
 
 	      	  	</div>
       	  	</div>
@@ -87,22 +96,21 @@
 		      			<div class="center-block elementBelow" >
 			      			<svg id="silhouette" height=307 width=317>	
 			      				<text id="textPercentage" x="37.7%" y="4%" font-size = "17px" > Percentage of goals </text>
-			       		  		<image x="47%" y="53%" height=267 width=317 transform="translate(-157.66,-133.5)" xlink:href='img/silhouette2.svg'></image>
-			      		  		<circle class = "circleHover" id ="shotCircle" cx="173" cy="237" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px"/>
-			      		  		<circle class = "circleHover" id ="headerCircle" cx="133" cy="57" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px" />
-			      		  		<text id="headerPercentageText" x="133" y="57" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
-			      		  		<text class="textUnits" id="headerPercentageUnit" x="133" y="65" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
-			      		  		<text id="shotPercentageText" x="174.7" y="237" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
-			      		  		<text class="textUnits" id="shotPercentageUnit" x="174.7" y="249" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
-			      		  		<text id="playerHeight" x="0" y="53%" font-size = "17" > 185cm</text>
-			      		  		<text id="playerWeight" x="47%" y="303" font-size = "17" > 79kg</text>
-								<g id="circlesLegend"> </g>
-								<image class="elementAbove helpHoverOver" x="63%" y="59.7%" height=87 width=87  xlink:href='img/hoverOverDown.svg' style = "pointer-events: none;" ></image>
-							</svg>	
-						</div>
+		       		  		<image x="47%" y="53%" height=267 width=317 transform="translate(-157.66,-133.5)" xlink:href='img/silhouette2.svg'></image>
+		      		  		<circle class = "circleHover" id ="shotCircle" cx="173" cy="237" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px"/>
+		      		  		<circle class = "circleHover" id ="headerCircle" cx="133" cy="57" r="1" fill="#238bbc" opacity="0.97" stroke="rgb(8, 29, 88)" stroke-width = "0px" />
+		      		  		<text id="headerPercentageText" x="133" y="57" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+		      		  		<text class="textUnits" id="headerPercentageUnit" x="133" y="65" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+		      		  		<text id="shotPercentageText" x="174.7" y="237" font-size = "17" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+		      		  		<text class="textUnits" id="shotPercentageUnit" x="174.7" y="249" font-size = "13" text-anchor="middle" style = "pointer-events: none; fill: white;"> </text>
+		      		  		<text id="playerHeight" x="0" y="53%" font-size = "17" > 185cm</text>
+		      		  		<text id="playerWeight" x="47%" y="303" font-size = "17" > 79kg</text>
+							      <g id="circlesLegend"> </g>
+							      <image class="elementAbove helpHoverOver" x="63%" y="59.7%" height=87 width=87  xlink:href='img/hoverOverDown.svg' style = "pointer-events: none;" ></image>
+							    </svg>	
+						    </div>
 
-
-						<div class="elementAbove" >
+						    <div class="elementAbove" >
 			      			<button id="togglePercentage" type="button" class="btn btn-default"  onclick="this.blur(); updatePercentage();  ">On target</button>
 		      			</div>
 		      		</div>
@@ -128,17 +136,15 @@
 			      			  Average
 			      			</h3>
 		      			</div>
-
-
 		      		</div>
+
 		      	</div>
 
 		      	<div class="row center-block" style="padding-bottom: 17px; ">
 		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block text-center"  height=307 width=317 >
 			      		<h2  >Most scored against</h2>
 			      		<div id="chartGoalTeam" class="elementBelow"></div>
-			      		
-					</div>
+					    </div>
 
 		      		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block" >
 		      			
@@ -162,7 +168,6 @@
 				      		  <text id= "percentageKey" x="97" y="181.7" >(80%)</text>
 
 			      		  </g>
-
 			      		</svg>
 
 			      		<button id="toggleHideGoals" type="button" class="btn btn-default" style="margin-left:19px;width:347px;" onclick="this.blur(); updateHideGoals();  ">Hide goals</button>
@@ -173,11 +178,17 @@
 			      		  <option> Blocked Shots</option>
 			      		  <option> All </option>
 			      		</select>-->
-			      	
-			      		
 
-					</div>
+					    </div>
 		      	</div>
+
+            <!--
+            <div class="row center-block" style="padding-bottom: 17px; ">
+              <div class = "col-lg-6 col-md-6 col-sm-12 col-xs-12 center-block " style="padding-top: 17px; padding-bottom: 17px;"> 
+                <div class="center-block" id="scatterPlot"  height=307 width=317  ></div>   
+              </div>  
+            </div>  -->
+
       		</div>
       </div>   
 
@@ -221,6 +232,7 @@
     <script type="text/javascript" src="scripts/d3-scale-chromatic.min.js"></script>
     <script type="text/javascript" src="scripts/crossfilter.js"></script>
     <script type="text/javascript" src="scripts/dc.min.js"></script>
+    <script type="text/javascript" src="scripts/d3-time.min.js"></script>
 
     <script src="scripts/jquery-3.1.1.min.js"></script>
       <script src="scripts/jquery-ui.min.js" ></script>
@@ -770,9 +782,17 @@
       playerDimension.filterExact(playerID);
       playerIncDimension.filterExact(playerID);
 
-      // ### UPDATE GENERAL STATS ###
+
+      // ### UPDATE INFORMATION OF PLAYER ###
+      // also computes age
+      d3.select("#Birdthday").text(formatDate(playerDimension.top(1)[0].birthday) + " (age " + (d3.timeYear.count(playerDimension.top(1)[0].birthday, new Date())-1) + ")" );
+      d3.select("#Team").text(playerDimension.top(1)[0].team);
+      d3.select("#Position").text(playerDimension.top(1)[0].position);
+      document.getElementById("Value").innerHTML="Value:" +" &euro; " + playerDimension.top(1)[0].value;
+      d3.select("#National").text( (playerDimension.top(1)[0].country == "NA")? "": "National team: " + playerDimension.top(1)[0].country);
 
 
+      // ### UPDATE CHARTS ###
       drawRadar(playerDimension,averagePlayer);
       
       // STRANE: has to regfroup if not strange things happen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -927,7 +947,7 @@
     // ############################# MAIN PROGRAMM #############################
 
     // ##########  LOAD PLAYER DATA ########## 
-    d3.csv("data/player_stats.csv", function(error,player_stats){
+    d3.csv("data/player_stats_sofifa.csv", function(error,player_stats){
       var nPlayers = player_stats.length;
 
       player_stats.forEach(function(d,i) {
@@ -974,6 +994,8 @@
         d.birthday = parseDate(d.birthday);
         d.height = Math.round(+d.height);
         d.weight = Math.round((+d.weight)*0.453592);
+        //d.wage = +d.wage;
+        //d.value = +d.value;
 
         allNames.push(d.player_name);
        
@@ -997,6 +1019,8 @@
       
 
       drawRadar(playerDimension,averagePlayer);
+
+      d3.select("#Birdthday").text(formatDate(playerDimension.top(1)[0].birthday) + " (age " + (d3.timeYear.count(playerDimension.top(1)[0].birthday, new Date())-1) + ")" );
 
 
       

@@ -36,4 +36,41 @@ for (i in 1:nrow(test)){
   
 }
 
-write.csv(test,"data/player_stats3.csv", row.names = F)
+test$position %<>% recode("CAM"="Centre Attacking Midfielder",
+                          "CB"="Centre Back",
+                          "CDM"="Center Defensive Midfielder",
+                          "CF"="Centre Forward",
+                          "CM"="Centre Midfield",
+                          "GK"="Goalkeeper",
+                          "LAM"="Left Attacking Midfielder",
+                          "LB"="Left Back",
+                          "LCB"="Left Centre Back",
+                          "LCM"="Left Centre Midfielder",
+                          "LDM"="Left Defensive Midfielder",
+                          "LF"="Left Forward",
+                          "LM"="Left Midfield",
+                          "LS"="Left Striker",
+                          "LW"="Left Wing",
+                          "RAM"="Right Attacking Midfielder",
+                          "RB"="Right Back",
+                          "RCB"="Right Centre Back",
+                          "RDM"="Right Defensive Midfielder",
+                          "RES"="Reserve",
+                          "RF"="Right Forward",
+                          "RM"="Right Midfield",
+                          "RS"="Right Striker",
+                          "RW"="Right Wing",
+                          "RWB"="Right Wing Back",
+                          "ST"="Striker",
+                          "SUB"="Substitute")
+
+#test$wage <- gsub("M","e6",test$wage)
+#test$wage <- gsub("K","e3",test$wage)
+#test$value <- gsub("K","e3",test$value)
+#test$value <- gsub("M","e6",test$value)
+#test$wage <- gsub("e6","M",test$wage)
+#test$wage <- gsub("e3","K",test$wage)
+#test$value <- gsub("e3","K",test$value)
+#test$value <- gsub("e6","M",test$value)
+
+write.csv(test,"data/player_stats_sofifa.csv", row.names = F)
