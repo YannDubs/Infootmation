@@ -82,7 +82,8 @@
                 <div class = "infoPlayer">
                     <h5 id="Birdthday" font-size="13px" >21 Aug 1988</h5>
                     <h5 id="Team">FC Bayern Munich</h5>
-                    <h5 id="Position">Striker</h5>                    
+                    <h5 id="Position">Striker</h5>
+                    <h5 id="Footed">Right-footed</h5>                       
                     <h5 id="Value">Value: &euro; 71M</h5>
                     <h5 id="National">National team: Poland</h5>
                 </div>
@@ -788,6 +789,7 @@
       d3.select("#Birdthday").text(formatDate(playerDimension.top(1)[0].birthday) + " (age " + (d3.timeYear.count(playerDimension.top(1)[0].birthday, new Date())-1) + ")" );
       d3.select("#Team").text(playerDimension.top(1)[0].team);
       d3.select("#Position").text(playerDimension.top(1)[0].position);
+      d3.select("#Footed").text(toTitleCase(playerDimension.top(1)[0].preferred_foot) + "-footed");
       document.getElementById("Value").innerHTML="Value:" +" &euro; " + playerDimension.top(1)[0].value;
       d3.select("#National").text( (playerDimension.top(1)[0].country == "NA")? "": "National team: " + playerDimension.top(1)[0].country);
 
